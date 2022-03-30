@@ -1,6 +1,9 @@
 name: MGBridge
-version: '${project.version}'
+version: ${project.version}
 main: vip.floatationdevice.mgbridge.MGBridge
 api-version: 1.13
 authors: [ MCUmbrella ]
 website: https://github.com/MCUmbrella/MGBridge
+commands:
+  mc2g:
+    description: The main command of MGBridge
