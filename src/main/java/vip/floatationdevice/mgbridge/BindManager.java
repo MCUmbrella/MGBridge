@@ -25,7 +25,8 @@ import static vip.floatationdevice.mgbridge.MGBridge.token;
 import static vip.floatationdevice.mgbridge.MGBridge.cfgPath;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
-@SuppressWarnings("UnstableApiUsage") public class BindManager implements Listener, CommandExecutor
+@SuppressWarnings({"unused", "UnstableApiUsage"})
+public class BindManager implements Listener, CommandExecutor
 {
     public static HashMap<String, UUID> bindMap = new HashMap<String, UUID>();// key: guilded userId; value: mc player uuid
     public static HashMap<String, UUID> pendingMap = new HashMap<String, UUID>();// key: bind code; value: mc player uuid
@@ -70,10 +71,10 @@ import static vip.floatationdevice.mgbridge.I18nUtil.translate;
     {
         ChatMessage msg = event.getChatMessageObject();// the received ChatMessage object
         if(msg.getServerId().equals(MGBridge.server) && msg.getChannelId().equals(MGBridge.channel))// in the right server and channel?
-            if(msg.getContent().startsWith("/mc2g mkbind"))
+            if(msg.getContent().startsWith("/mgb mkbind"))
             {
                 String[] args = msg.getContent().split(" ");
-                // args.length=3; args[0]="/mc2g", args[1]="bind", args[2]="<code>"
+                // args.length=3; args[0]="/mgb", args[1]="bind", args[2]="<code>"
                 if(args.length != 3)// incorrect command format?
                 {
                     sendGuildedMsg(translate("g-usage"), msg.getId());
@@ -107,7 +108,7 @@ import static vip.floatationdevice.mgbridge.I18nUtil.translate;
                     }
                 }
             }
-            else if(msg.getContent().equals("/mc2g rmbind"))
+            else if(msg.getContent().equals("/mgb rmbind"))
             {
                 if(bindMap.containsKey(msg.getCreatorId()))// player bound?
                 {

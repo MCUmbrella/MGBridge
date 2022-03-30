@@ -86,7 +86,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     mgbRunning = true;
                 }
             });
-            sendGuildedMsg(translate("mgb-started"));
+            sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()));
         }
         catch(Throwable e)
         {
