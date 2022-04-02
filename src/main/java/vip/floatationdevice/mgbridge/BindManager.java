@@ -79,6 +79,7 @@ public class BindManager implements Listener, CommandExecutor
     {
         ChatMessage msg = event.getChatMessageObject();// the received ChatMessage object
         if(msg.getServerId().equals(MGBridge.server) && msg.getChannelId().equals(MGBridge.channel))// in the right server and channel?
+        {
             if(msg.getContent().startsWith("/mgb "))
             {
                 String[] args = msg.getContent().split(" ");
@@ -132,12 +133,16 @@ public class BindManager implements Listener, CommandExecutor
                     }
                     default:
                     {
-                        if(!msg.getContent().startsWith("/") && bindMap.containsKey(msg.getCreatorId()))
-                            Bukkit.broadcastMessage("<" + getPlayerName(bindMap.get(msg.getCreatorId())) + "> " + msg.getContent());
                         break;
                     }
                 }
             }
+            else // not a mgb command
+            {
+                if(!msg.getContent().startsWith("/") && bindMap.containsKey(msg.getCreatorId())) // guilded user bound?
+                    Bukkit.broadcastMessage("§e<§r" + getPlayerName(bindMap.get(msg.getCreatorId())) + "§e> §r" + msg.getContent());
+            }
+        }
     }
 
     @Override
@@ -221,7 +226,7 @@ public class BindManager implements Listener, CommandExecutor
             BindMapContainer temp = (BindMapContainer) o.readObject();
             o.close();
             bindMap = temp.saveBindMap;
-            instance.getLogger().info(translate("bindmap-load-success"));
+            instance.getLogger().info(translate("bindmap-load-success").replace("%COUNT%", String.valueOf(bindMap.size())));
         }
         catch(FileNotFoundException ignored) {}
         catch(Exception e)

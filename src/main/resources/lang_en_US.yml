@@ -13,7 +13,7 @@ disconnected-unexpected: "Connection to Guilded server lost. Reconnecting"
 
 bindmap-save-success: "Bind map saved"
 bindmap-save-failure: "Failed to save bind map: %EXCEPTION%"
-bindmap-load-success: "Bind map loaded"
+bindmap-load-success: "Bind map loaded. Total %COUNT% binds"
 bindmap-load-failure: "Failed to load bind map: %EXCEPTION%"
 
 c-bind-success: "%PLAYER% successfully bound Guilded account"
@@ -21,11 +21,11 @@ c-unbind-success: "%PLAYER% successfully unbound Guilded account"
 c-code-requested: "%PLAYER% requested a bind code: %CODE%"
 
 # Messages sent to Minecraft client
-m-usage: "[§6MGBridge§f] §eUsage: /mgb <mkbind/rmbind>"
-m-bind-success: "[§6MGBridge§f] §aSuccessfully bound your Guilded account\n  §aNow you can send messages from Guilded server to Minecraft server"
-m-unbind-success: "[§6MGBridge§f] §aSuccessfully unbound your Guilded account"
-m-no-bind: "[§6MGBridge§f] §cYou must bind a Guilded account first"
-m-code-requested: "[§6MGBridge§f] Your bind code is: §a%CODE%\n  §fType \"§a/mgb mkbind %CODE%§f\" in Guilded server's chat-forwarding channel to confirm the bind"
+m-usage: "[§eMGBridge§f] §eUsage: /mgb <mkbind/rmbind>"
+m-bind-success: "[§eMGBridge§f] §aSuccessfully bound your Guilded account\n  §aNow you can send messages from Guilded server to Minecraft server"
+m-unbind-success: "[§eMGBridge§f] §aSuccessfully unbound your Guilded account"
+m-no-bind: "[§eMGBridge§f] §cYou must bind a Guilded account first"
+m-code-requested: "[§eMGBridge§f] Your bind code is: §a%CODE%\n  §fType \"§a/mgb mkbind %CODE%§f\" in Guilded server's chat-forwarding channel to confirm the bind"
 
 # Messages sent to Guilded server
 g-usage: "[X] Usage: /mgb mkbind <CODE>"

@@ -13,7 +13,7 @@ disconnected-unexpected: "到Guilded服务器的连接中断，重连中"
 
 bindmap-save-success: "保存绑定表"
 bindmap-save-failure: "保存绑定表失败：%EXCEPTION%"
-bindmap-load-success: "读取绑定表"
+bindmap-load-success: "读取绑定表成功。共有%COUNT%个绑定记录"
 bindmap-load-failure: "读取绑定表失败：%EXCEPTION%"
 
 c-bind-success: "%PLAYER%成功绑定Guilded账户"
@@ -21,11 +21,11 @@ c-unbind-success: "%PLAYER%成功解绑Guilded账户"
 c-code-requested: "%PLAYER%请求绑定码：%CODE%"
 
 # Messages sent to Minecraft client
-m-usage: "[§6MGBridge§f] §e用法：/mgb <mkbind/rmbind>"
-m-bind-success: "[§6MGBridge§f] §a成功绑定Guilded账户\n  §a你现在可以从Guilded发送信息到Minecraft了"
-m-unbind-success: "[§6MGBridge§f] §a成功解绑Guilded账户"
-m-no-bind: "[§6MGBridge§f] §c你还没有绑定Guilded账户"
-m-code-requested: "[§6MGBridge§f] 你的绑定码为： §a%CODE%\n  §f在Guilded的聊天转发频道输入“§a/mgb mkbind %CODE%§f”确认绑定"
+m-usage: "[§eMGBridge§f] §e用法：/mgb <mkbind/rmbind>"
+m-bind-success: "[§eMGBridge§f] §a成功绑定Guilded账户\n  §a你现在可以从Guilded发送信息到Minecraft了"
+m-unbind-success: "[§eMGBridge§f] §a成功解绑Guilded账户"
+m-no-bind: "[§eMGBridge§f] §c你还没有绑定Guilded账户"
+m-code-requested: "[§eMGBridge§f] 你的绑定码为： §a%CODE%\n  §f在Guilded的聊天转发频道输入“§a/mgb mkbind %CODE%§f”确认绑定"
 
 # Messages sent to Guilded server
 g-usage: "[X] 用法：/mgb mkbind <CODE>"
