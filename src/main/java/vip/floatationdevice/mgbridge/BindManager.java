@@ -15,6 +15,8 @@ import vip.floatationdevice.guilded4j.event.GuildedWebSocketInitializedEvent;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -31,14 +33,19 @@ public class BindManager implements Listener, CommandExecutor
     public static HashMap<String, UUID> bindMap = new HashMap<String, UUID>();// key: guilded userId; value: mc player uuid
     public static HashMap<String, UUID> pendingMap = new HashMap<String, UUID>();// key: bind code; value: mc player uuid
     public static HashMap<UUID, String> pendingPlayerMap = new HashMap<UUID, String>();// pendingMap but with upside down
-    public static final Random r = new Random();
-    G4JWebSocketClient ws;
+    public static final Random r = new Random(); // used to generate random bind code
+    G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
+    private final String socksProxyHost = System.getProperty("socksProxyHost"); // socks proxy settings in the arguments
+    private final String socksProxyPort = System.getProperty("socksProxyPort");
 
     public BindManager()
     {
         loadBindMap();
-        ws = new G4JWebSocketClient(MGBridge.token);
         instance.getLogger().info(translate("connecting"));
+        ws = new G4JWebSocketClient(MGBridge.token);
+        // set socks proxy if it is set in the arguments
+        if(socksProxyHost != null && socksProxyPort != null)
+            ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
         ws.eventBus.register(this);
         ws.connect();
     }
@@ -58,8 +65,10 @@ public class BindManager implements Listener, CommandExecutor
             // then we can consider it as unexpected and do a reconnection
             instance.getLogger().warning(translate("disconnected-unexpected"));
             ws = new G4JWebSocketClient(token);
-            ws.connect();
+            if(socksProxyHost != null && socksProxyPort != null)
+                ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
             ws.eventBus.register(this);
+            ws.connect();
         }
         else
             // the plugin is being disabled or the server is stopping, so we can just ignore this
