@@ -175,4 +175,29 @@ public final class MGBridge extends JavaPlugin implements Listener
             }
         });
     }
+
+    public void sendGuildedMsg(String msg, String replyTo)
+    {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if(g4JClient != null)
+                {
+                    ChatMessage result = null;
+                    try
+                    {
+                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, new String[]{replyTo}, false);
+                    }
+                    catch(Exception e)
+                    {
+                        getLogger().severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
+                    }
+                    if(debug && result != null)
+                        getLogger().info("\n" + new JSONObject(result.toString()).toStringPretty());
+                }
+            }
+        });
+    }
 }
