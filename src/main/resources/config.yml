@@ -1,6 +1,14 @@
+# The language to use for the plugin.
+# Go to https://github.com/MCUmbrella/MGBridge/tree/main/src/main/resources to see the available languages.
+# Language files are named "lang_xx_XX.yml" where "xx" is the language code and "XX" is the country code.
 language: "en_US"
+# Your bot token. You can get one from "Server Settings -> Bots -> (bot name) -> Manage auth tokens"
 token:
+# Target server ID. The plugin will only detect messages sent from this server
 server:
+# Target channel UUID. All message forwarding occurs in this channel
 channel:
+# Forward player join/quit messages
 forwardJoinLeaveEvents: true
+# Print the response after forwarding a message to Guilded
 debug: false
