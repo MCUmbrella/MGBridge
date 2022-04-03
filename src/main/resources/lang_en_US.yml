@@ -13,7 +13,7 @@ disconnected-unexpected: "Connection to Guilded server lost. Reconnecting"
 
 bindmap-save-success: "Bind map saved"
 bindmap-save-failure: "Failed to save bind map: %EXCEPTION%"
-bindmap-load-success: "Bind map loaded. Total %COUNT% binds"
+bindmap-load-success: "Bind map loaded. Total %COUNT% bind(s)"
 bindmap-load-failure: "Failed to load bind map: %EXCEPTION%"
 
 c-bind-success: "%PLAYER% successfully bound Guilded account"

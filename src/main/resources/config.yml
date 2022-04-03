@@ -1,0 +1,6 @@
+language: "en_US"
+token:
+server:
+channel:
+forwardJoinLeaveEvents: true
+debug: false

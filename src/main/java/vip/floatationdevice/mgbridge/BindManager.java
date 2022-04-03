@@ -23,7 +23,6 @@ import java.util.UUID;
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
 import static vip.floatationdevice.mgbridge.MGBridge.mgbRunning;
 import static vip.floatationdevice.mgbridge.MGBridge.token;
-import static vip.floatationdevice.mgbridge.MGBridge.cfgPath;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
@@ -207,7 +206,7 @@ public class BindManager implements Listener, CommandExecutor
     {
         try
         {
-            ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(cfgPath + "bindMap.dat"));
+            ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(new File(instance.getDataFolder(), "bindMap.dat")));
             o.writeObject(new BindMapContainer(bindMap));
             o.close();
             instance.getLogger().info(translate("bindmap-save-success"));
@@ -222,7 +221,7 @@ public class BindManager implements Listener, CommandExecutor
     {
         try
         {
-            ObjectInputStream o = new ObjectInputStream(new FileInputStream(cfgPath + "bindMap.dat"));
+            ObjectInputStream o = new ObjectInputStream(new FileInputStream(new File(instance.getDataFolder(), "bindMap.dat")));
             BindMapContainer temp = (BindMapContainer) o.readObject();
             o.close();
             bindMap = temp.saveBindMap;

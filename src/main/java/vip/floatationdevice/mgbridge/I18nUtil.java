@@ -22,9 +22,8 @@ public class I18nUtil
 
     public static String translate(String key)
     {
-        String msg = l.getString(key);
-        if(msg == null) return "[NO TRANSLATION: " + key + "]";
-        return msg;
+        if(l == null) throw new IllegalStateException("Translation engine not initialized");
+        return l.getString(key) == null ? "[NO TRANSLATION: " + key + "]" : l.getString(key);
     }
 
     public static String getLanguage()

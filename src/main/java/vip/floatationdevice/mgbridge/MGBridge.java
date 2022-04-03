@@ -11,29 +11,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
-import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
-import java.io.*;
-import java.util.Properties;
+import static vip.floatationdevice.mgbridge.ConfigManager.cfg;
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 public final class MGBridge extends JavaPlugin implements Listener
 {
     public static MGBridge instance;
-    final static String cfgPath = "." + File.separator + "plugins" + File.separator + "MGBridge" + File.separator;
     static String lang, token, server, channel;
     static Boolean mgbRunning = false;
-    G4JClient g4JClient;
-    BindManager bindMgr;
+    G4JClient g4JClient = null;
+    BindManager bindMgr = null;
     Boolean forwardJoinLeaveEvents = true;
     Boolean debug = false;
-
-    boolean isNull(String... s)
-    {
-        for(String a : s)
-            if(a == null || a.isEmpty())
-                return true;
-        return false;
-    }
 
     @Override
     public void onEnable()
@@ -42,38 +32,24 @@ public final class MGBridge extends JavaPlugin implements Listener
         Bukkit.getPluginManager().registerEvents(this, this);
         try
         {
-            new File(new File(cfgPath + "config.properties").getParent()).mkdirs();
-            File file = new File(cfgPath + "config.properties");
-            if(!file.exists())
+            if(!ConfigManager.loadConfig())
             {
-                getLogger().severe("Config file not found and a empty one will be created. Set the token and channel UUID and RESTART server.");
-                BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-                bw.write("language=en_US\ntoken=\nserver=\nchannel=\nforwardJoinLeaveEvents=true\ndebug=false\n");
-                bw.flush();
-                bw.close();
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            BufferedReader cfg = new BufferedReader(new FileReader(file));
-            Properties p = new Properties();
-            p.load(cfg);
-            lang = p.getProperty("language");
-            token = p.getProperty("token");
-            server = p.getProperty("server");
-            channel = p.getProperty("channel");
-            if(isNull(lang, token, server, channel, p.getProperty("forwardJoinLeaveEvents"), p.getProperty("debug"))
-                    || !lang.matches("^[a-z]{2}_[A-Z]{2}$") || channel.length() != 36 || server.length() != 8
-                    || !p.getProperty("forwardJoinLeaveEvents").toLowerCase().matches("^(true|false)$")
-                    || !p.getProperty("debug").toLowerCase().matches("^(true|false)$"))
+            lang = cfg.getString("language");
+            token = cfg.getString("token");
+            server = cfg.getString("server");
+            channel = cfg.getString("channel");
+            forwardJoinLeaveEvents = cfg.getBoolean("forwardJoinLeaveEvents");
+            debug = cfg.getBoolean("debug");
+            I18nUtil.setLanguage(lang);
+            if(notSet(lang, token, server, channel) || !lang.matches("^[a-z]{2}_[A-Z]{2}$") || channel.length() != 36 || server.length() != 8)
             {
                 getLogger().severe(translate("invalid-config"));
-                g4JClient = null;
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            forwardJoinLeaveEvents = Boolean.parseBoolean(p.getProperty("forwardJoinLeaveEvents"));
-            debug = Boolean.parseBoolean(p.getProperty("debug"));
-            I18nUtil.setLanguage(lang);
             g4JClient = new G4JClient(token);
             Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable()
             {// fuck lambdas all my codes are lambda-free
@@ -86,13 +62,11 @@ public final class MGBridge extends JavaPlugin implements Listener
                     mgbRunning = true;
                 }
             });
-            sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()));
+            sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
         catch(Throwable e)
         {
             getLogger().severe("Failed to initialize plugin!");
-            g4JClient = null;
-            bindMgr = null;
             e.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -128,7 +102,7 @@ public final class MGBridge extends JavaPlugin implements Listener
             {
                 String message = event.getMessage();
                 if(!message.startsWith("/"))
-                    sendGuildedMsg("<" + event.getPlayer().getName() + "> " + message);
+                    sendGuildedMsg("<" + event.getPlayer().getName() + "> " + message, null);
             }
         });
     }
@@ -137,43 +111,21 @@ public final class MGBridge extends JavaPlugin implements Listener
     public void onJoin(PlayerJoinEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-connected").replace("%PLAYER%", event.getPlayer().getName()));
+            sendGuildedMsg(translate("player-connected").replace("%PLAYER%", event.getPlayer().getName()), null);
     }
 
     @EventHandler
     public void onUnusualLeave(PlayerKickEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-disconnected-unusual").replace("%PLAYER%", event.getPlayer().getName()).replace("%REASON%", event.getReason()));
+            sendGuildedMsg(translate("player-disconnected-unusual").replace("%PLAYER%", event.getPlayer().getName()).replace("%REASON%", event.getReason()), null);
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-disconnected").replace("%PLAYER%", event.getPlayer().getName()));
-    }
-
-    public void sendGuildedMsg(String msg)
-    {
-        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if(g4JClient != null)
-                {
-                    ChatMessage result = null;
-                    try {result = g4JClient.createChannelMessage(channel, msg, null, null);}
-                    catch(Exception e)
-                    {
-                        getLogger().severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
-                    }
-                    if(debug && result != null)
-                        getLogger().info("\n" + new JSONObject(result.toString()).toStringPretty());
-                }
-            }
-        });
+            sendGuildedMsg(translate("player-disconnected").replace("%PLAYER%", event.getPlayer().getName()), null);
     }
 
     public void sendGuildedMsg(String msg, String replyTo)
@@ -188,7 +140,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     ChatMessage result = null;
                     try
                     {
-                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, new String[]{replyTo}, false);
+                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, replyTo == null ? null : new String[]{replyTo}, false);
                     }
                     catch(Exception e)
                     {
@@ -199,5 +151,13 @@ public final class MGBridge extends JavaPlugin implements Listener
                 }
             }
         });
+    }
+
+    static boolean notSet(String... s)
+    {
+        for(String a : s)
+            if(a == null || a.isEmpty())
+                return true;
+        return false;
     }
 }
