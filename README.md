@@ -20,6 +20,9 @@ debug=false
 - `channel`: target channel ID. All message forwarding occurs in this channel.
 - `forwardJoinLeaveEvents`: whether forward player join/quit messages or not.
 - `debug`: print the response after forwarding a message to Guilded.
+## Download:
+- [Development builds](https://github.com/MCUmbrella/MGBridge/actions/workflows/maven.yml)
+- [Releases](https://github.com/MCUmbrella/MGBridge/releases)
 ## Binding your Guilded account:
 1. Log into the Minecraft server and type `/mgb mkbind` and you will get a 10-digit random binding code.
 2. Open Guilded client and type `/mgb mkbind <code>`.
