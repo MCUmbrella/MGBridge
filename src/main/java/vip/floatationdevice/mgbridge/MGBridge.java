@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import static vip.floatationdevice.mgbridge.ConfigManager.cfg;
@@ -25,6 +26,7 @@ public final class MGBridge extends JavaPlugin implements Listener
     static Boolean mgbRunning = false;
     G4JClient g4JClient = null;
     BindManager bindMgr = null;
+    GuildedEventListener gEventListener = null;
     Boolean forwardJoinLeaveEvents = true;
     Boolean debug = false;
 
@@ -54,9 +56,10 @@ public final class MGBridge extends JavaPlugin implements Listener
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
+            BindManager.loadBindMap();
             g4JClient = new G4JClient(token);
-            bindMgr = new BindManager();
             getCommand("mgb").setExecutor(new BukkitCommandExecutor());
+            gEventListener = new GuildedEventListener();
             mgbRunning = true;
             sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
@@ -74,7 +77,7 @@ public final class MGBridge extends JavaPlugin implements Listener
         mgbRunning = false;
         if(bindMgr != null)
         {
-            bindMgr.ws.close();
+            gEventListener.ws.close();
             bindMgr = null;
         }
         if(g4JClient != null)
@@ -148,5 +151,11 @@ public final class MGBridge extends JavaPlugin implements Listener
             if(a == null || a.isEmpty())
                 return true;
         return false;
+    }
+
+    public static String getPlayerName(final UUID u)
+    {
+        try {return Bukkit.getPlayer(u).getName();}
+        catch(NullPointerException e) {return Bukkit.getOfflinePlayer(u).getName();}
     }
 }

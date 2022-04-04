@@ -5,12 +5,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Random;
+
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.log;
 
 public class BukkitCommandExecutor implements CommandExecutor
 {
+    public static final Random r = new Random(); // used to generate random bind code
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
