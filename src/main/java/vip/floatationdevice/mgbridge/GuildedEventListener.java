@@ -35,16 +35,23 @@ public class GuildedEventListener
         for(GuildedCommandExecutor executor : executors)
         {
             if(executor.getCommandName().equals(commandName))
+            {
                 executors.remove(executor);
-            return this;
+                return this;
+            }
         }
-        throw new NullPointerException("No executor found for command " + commandName);
+        throw new IllegalArgumentException("No executor found for command " + commandName);
+    }
+
+    public void clearExecutors()
+    {
+        executors.clear();
     }
 
     public GuildedEventListener()
     {
         log.info(translate("connecting"));
-        ws = new G4JWebSocketClient(MGBridge.token);
+        ws = new G4JWebSocketClient(token);
         // set socks proxy if it is set in the arguments
         if(socksProxyHost != null && socksProxyPort != null)
             ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
@@ -81,7 +88,7 @@ public class GuildedEventListener
     public void onGuildedMessage(ChatMessageCreatedEvent event)
     {
         ChatMessage msg = event.getChatMessageObject();// the received ChatMessage object
-        if(msg.getServerId().equals(MGBridge.server) && msg.getChannelId().equals(MGBridge.channel))// in the right server and channel?
+        if(msg.getServerId().equals(server) && msg.getChannelId().equals(channel))// in the right server and channel?
         {
             if(msg.getContent().startsWith("/mgb "))
             {

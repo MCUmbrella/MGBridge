@@ -11,7 +11,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
+import vip.floatationdevice.mgbridge.gce.Command_list;
 import vip.floatationdevice.mgbridge.gce.Command_mkbind;
+import vip.floatationdevice.mgbridge.gce.Command_ping;
 import vip.floatationdevice.mgbridge.gce.Command_rmbind;
 
 import java.util.UUID;
@@ -27,7 +29,6 @@ public final class MGBridge extends JavaPlugin implements Listener
     static String lang, token, server, channel;
     static Boolean mgbRunning = false;
     G4JClient g4JClient = null;
-    BindManager bindMgr = null;
     GuildedEventListener gEventListener = null;
     Boolean forwardJoinLeaveEvents = true;
     Boolean debug = false;
@@ -63,7 +64,9 @@ public final class MGBridge extends JavaPlugin implements Listener
             getCommand("mgb").setExecutor(new BukkitCommandExecutor());
             gEventListener = new GuildedEventListener()
                     .registerExecutor(new Command_mkbind())
-                    .registerExecutor(new Command_rmbind());
+                    .registerExecutor(new Command_rmbind())
+                    .registerExecutor(new Command_ping())
+                    .registerExecutor(new Command_list());
             mgbRunning = true;
             sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
@@ -79,10 +82,11 @@ public final class MGBridge extends JavaPlugin implements Listener
     public void onDisable()
     {
         mgbRunning = false;
-        if(bindMgr != null)
+        if(gEventListener != null)
         {
             gEventListener.ws.close();
-            bindMgr = null;
+            gEventListener.clearExecutors();
+            gEventListener = null;
         }
         if(g4JClient != null)
         {
