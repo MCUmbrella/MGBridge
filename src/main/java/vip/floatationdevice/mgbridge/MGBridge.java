@@ -12,12 +12,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
+import java.util.logging.Logger;
+
 import static vip.floatationdevice.mgbridge.ConfigManager.cfg;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 public final class MGBridge extends JavaPlugin implements Listener
 {
     public static MGBridge instance;
+    public static Logger log;
     static String lang, token, server, channel;
     static Boolean mgbRunning = false;
     G4JClient g4JClient = null;
@@ -29,6 +32,7 @@ public final class MGBridge extends JavaPlugin implements Listener
     public void onEnable()
     {
         instance = this;
+        log = getLogger();
         Bukkit.getPluginManager().registerEvents(this, this);
         try
         {
@@ -46,27 +50,19 @@ public final class MGBridge extends JavaPlugin implements Listener
             I18nUtil.setLanguage(lang);
             if(notSet(lang, token, server, channel) || !lang.matches("^[a-z]{2}_[A-Z]{2}$") || channel.length() != 36 || server.length() != 8)
             {
-                getLogger().severe(translate("invalid-config"));
+                log.severe(translate("invalid-config"));
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
             g4JClient = new G4JClient(token);
-            Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable()
-            {// fuck lambdas all my codes are lambda-free
-                @Override
-                public void run()
-                {
-                    bindMgr = new BindManager();
-                    Bukkit.getPluginManager().registerEvents(bindMgr, instance);
-                    getCommand("mgb").setExecutor(bindMgr);
-                    mgbRunning = true;
-                }
-            });
+            bindMgr = new BindManager();
+            getCommand("mgb").setExecutor(bindMgr);
+            mgbRunning = true;
             sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
         catch(Throwable e)
         {
-            getLogger().severe("Failed to initialize plugin!");
+            log.severe("Failed to initialize plugin!");
             e.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -85,26 +81,19 @@ public final class MGBridge extends JavaPlugin implements Listener
         {
             ChatMessage result = null;
             try {result = g4JClient.createChannelMessage(channel, translate("mgb-stopped"), null, null);}
-            catch(Exception e) {getLogger().severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));}
+            catch(Exception e) {log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));}
             g4JClient = null;
             if(debug && result != null)
-                getLogger().info("\n" + new JSONObject(result.toString()).toStringPretty());
+                log.info("\n" + new JSONObject(result.toString()).toStringPretty());
         }
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event)
     {
-        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                String message = event.getMessage();
-                if(!message.startsWith("/"))
-                    sendGuildedMsg("<" + event.getPlayer().getName() + "> " + message, null);
-            }
-        });
+        String message = event.getMessage();
+        if(!message.startsWith("/"))
+            sendGuildedMsg("<" + event.getPlayer().getName() + "> " + message, null);
     }
 
     @EventHandler
@@ -131,7 +120,7 @@ public final class MGBridge extends JavaPlugin implements Listener
     public void sendGuildedMsg(String msg, String replyTo)
     {
         Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
-        {
+        {// fuck lambdas all my codes are lambda-free
             @Override
             public void run()
             {
@@ -144,10 +133,10 @@ public final class MGBridge extends JavaPlugin implements Listener
                     }
                     catch(Exception e)
                     {
-                        getLogger().severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
+                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
                     }
                     if(debug && result != null)
-                        getLogger().info("\n" + new JSONObject(result.toString()).toStringPretty());
+                        log.info("\n" + new JSONObject(result.toString()).toStringPretty());
                 }
             }
         });

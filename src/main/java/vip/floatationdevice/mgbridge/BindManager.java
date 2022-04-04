@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import vip.floatationdevice.guilded4j.G4JWebSocketClient;
 import vip.floatationdevice.guilded4j.event.ChatMessageCreatedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketClosedEvent;
@@ -21,12 +20,13 @@ import java.util.Random;
 import java.util.UUID;
 
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
+import static vip.floatationdevice.mgbridge.MGBridge.log;
 import static vip.floatationdevice.mgbridge.MGBridge.mgbRunning;
 import static vip.floatationdevice.mgbridge.MGBridge.token;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
-public class BindManager implements Listener, CommandExecutor
+public class BindManager implements CommandExecutor
 {
     public static HashMap<String, UUID> bindMap = new HashMap<String, UUID>();// key: guilded userId; value: mc player uuid
     public static HashMap<String, UUID> pendingMap = new HashMap<String, UUID>();// key: bind code; value: mc player uuid
@@ -39,7 +39,7 @@ public class BindManager implements Listener, CommandExecutor
     public BindManager()
     {
         loadBindMap();
-        instance.getLogger().info(translate("connecting"));
+        log.info(translate("connecting"));
         ws = new G4JWebSocketClient(MGBridge.token);
         // set socks proxy if it is set in the arguments
         if(socksProxyHost != null && socksProxyPort != null)
@@ -51,7 +51,7 @@ public class BindManager implements Listener, CommandExecutor
     @Subscribe
     public void onG4JConnectionOpened(GuildedWebSocketInitializedEvent event)
     {
-        instance.getLogger().info(translate("connected"));
+        log.info(translate("connected"));
     }
 
     @Subscribe
@@ -61,7 +61,7 @@ public class BindManager implements Listener, CommandExecutor
         {
             // if the plugin is running normally but the connection was closed
             // then we can consider it as unexpected and do a reconnection
-            instance.getLogger().warning(translate("disconnected-unexpected"));
+            log.warning(translate("disconnected-unexpected"));
             ws = new G4JWebSocketClient(token);
             if(socksProxyHost != null && socksProxyPort != null)
                 ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
@@ -70,7 +70,7 @@ public class BindManager implements Listener, CommandExecutor
         }
         else
             // the plugin is being disabled or the server is stopping, so we can just ignore this
-            instance.getLogger().info(translate("disconnected"));
+            log.info(translate("disconnected"));
     }
 
     @Subscribe
@@ -104,7 +104,7 @@ public class BindManager implements Listener, CommandExecutor
                                     }
                                     catch(NullPointerException ignored) {}
                                     instance.sendGuildedMsg(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))), msg.getId());
-                                    instance.getLogger().info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
+                                    log.info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
                                     saveBindMap();
                                 }
                                 else// code not in pending list?
@@ -123,7 +123,7 @@ public class BindManager implements Listener, CommandExecutor
                             catch(Exception ignored) {}
                             UUID removed = bindMap.remove(msg.getCreatorId());
                             instance.sendGuildedMsg(translate("g-unbind-success"), msg.getId());
-                            instance.getLogger().info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
+                            log.info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
                             saveBindMap();
                         }
                         else// player not bound?
@@ -162,7 +162,7 @@ public class BindManager implements Listener, CommandExecutor
             pendingMap.put(code, ((Player) sender).getUniqueId());
             pendingPlayerMap.put(((Player) sender).getUniqueId(), code);
             sender.sendMessage(translate("m-code-requested").replace("%CODE%", code));
-            instance.getLogger().info(translate("c-code-requested").replace("%PLAYER%", sender.getName()).replace("%CODE%", code));
+            log.info(translate("c-code-requested").replace("%PLAYER%", sender.getName()).replace("%CODE%", code));
             return true;
         }
         else if(args.length == 1 && args[0].equals("rmbind"))
@@ -173,7 +173,7 @@ public class BindManager implements Listener, CommandExecutor
                 {
                     bindMap.remove(u);
                     sender.sendMessage(translate("m-unbind-success"));
-                    instance.getLogger().info(translate("c-unbind-success").replace("%PLAYER%", sender.getName()));
+                    log.info(translate("c-unbind-success").replace("%PLAYER%", sender.getName()));
                     saveBindMap();
                     return true;
                 }
@@ -202,22 +202,22 @@ public class BindManager implements Listener, CommandExecutor
         public BindMapContainer(HashMap<String, UUID> bindMap){saveBindMap = bindMap;}
     }
 
-    public void saveBindMap()
+    public static void saveBindMap()
     {
         try
         {
             ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(new File(instance.getDataFolder(), "bindMap.dat")));
             o.writeObject(new BindMapContainer(bindMap));
             o.close();
-            instance.getLogger().info(translate("bindmap-save-success"));
+            log.info(translate("bindmap-save-success"));
         }
         catch(Exception e)
         {
-            instance.getLogger().severe(translate("bindmap-save-failure").replace("%EXCEPTION%", e.toString()));
+            log.severe(translate("bindmap-save-failure").replace("%EXCEPTION%", e.toString()));
         }
     }
 
-    public void loadBindMap()
+    public static void loadBindMap()
     {
         try
         {
@@ -225,12 +225,12 @@ public class BindManager implements Listener, CommandExecutor
             BindMapContainer temp = (BindMapContainer) o.readObject();
             o.close();
             bindMap = temp.saveBindMap;
-            instance.getLogger().info(translate("bindmap-load-success").replace("%COUNT%", String.valueOf(bindMap.size())));
+            log.info(translate("bindmap-load-success").replace("%COUNT%", String.valueOf(bindMap.size())));
         }
         catch(FileNotFoundException ignored) {}
         catch(Exception e)
         {
-            instance.getLogger().severe(translate("bindmap-load-failure").replace("%EXCEPTION%", e.toString()));
+            log.severe(translate("bindmap-load-failure").replace("%EXCEPTION%", e.toString()));
         }
     }
 }
