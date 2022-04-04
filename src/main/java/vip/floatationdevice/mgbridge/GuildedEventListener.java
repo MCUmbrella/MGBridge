@@ -10,7 +10,7 @@ import vip.floatationdevice.guilded4j.object.ChatMessage;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.UUID;
+import java.util.ArrayList;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
@@ -22,6 +22,24 @@ public class GuildedEventListener
     G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
     private final String socksProxyHost = System.getProperty("socksProxyHost"); // socks proxy settings in the arguments
     private final String socksProxyPort = System.getProperty("socksProxyPort");
+    private final ArrayList<GuildedCommandExecutor> executors = new ArrayList<>(); // list of guilded commands to execute
+
+    public GuildedEventListener registerExecutor(GuildedCommandExecutor executor)
+    {
+        executors.add(executor);
+        return this;
+    }
+
+    public GuildedEventListener unregisterExecutor(String commandName)
+    {
+        for(GuildedCommandExecutor executor : executors)
+        {
+            if(executor.getCommandName().equals(commandName))
+                executors.remove(executor);
+            return this;
+        }
+        throw new NullPointerException("No executor found for command " + commandName);
+    }
 
     public GuildedEventListener()
     {
@@ -60,67 +78,20 @@ public class GuildedEventListener
     }
 
     @Subscribe
-    public void onGuildedChat(ChatMessageCreatedEvent event)
+    public void onGuildedMessage(ChatMessageCreatedEvent event)
     {
         ChatMessage msg = event.getChatMessageObject();// the received ChatMessage object
         if(msg.getServerId().equals(MGBridge.server) && msg.getChannelId().equals(MGBridge.channel))// in the right server and channel?
         {
             if(msg.getContent().startsWith("/mgb "))
             {
-                String[] args = msg.getContent().split(" ");
-                switch(args[1])
-                {
-                    case "mkbind":
-                    {
-                        if(args.length != 3)// incorrect command format?
-                            instance.sendGuildedMsg(translate("g-usage"), msg.getId());
-                        else// right usage?
-                            if(bindMap.containsKey(msg.getCreatorId()))// player already bound?
-                                instance.sendGuildedMsg(translate("g-already-bound").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))), msg.getId());
-                            else// player not bound?
-                            {
-                                if(pendingMap.containsKey(args[2]))// code matched?
-                                {
-                                    bindMap.put(msg.getCreatorId(), pendingMap.get(args[2]));
-                                    pendingPlayerMap.remove(pendingMap.get(args[2]));
-                                    pendingMap.remove(args[2]);
-                                    try
-                                    {
-                                        Bukkit.getPlayer(bindMap.get(msg.getCreatorId())).sendMessage(translate("m-bind-success"));
-                                    }
-                                    catch(NullPointerException ignored) {}
-                                    instance.sendGuildedMsg(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))), msg.getId());
-                                    log.info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
-                                    saveBindMap();
-                                }
-                                else// code not in pending list?
-                                    instance.sendGuildedMsg(translate("invalid-code"), msg.getId());
-                            }
-                        break;
-                    }
-                    case "rmbind":
-                    {
-                        if(bindMap.containsKey(msg.getCreatorId()))// player bound?
-                        {
-                            try
-                            {
-                                Bukkit.getPlayer(bindMap.get(msg.getCreatorId())).sendMessage(translate("m-unbind-success"));
-                            }
-                            catch(Exception ignored) {}
-                            UUID removed = bindMap.remove(msg.getCreatorId());
-                            instance.sendGuildedMsg(translate("g-unbind-success"), msg.getId());
-                            log.info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
-                            saveBindMap();
-                        }
-                        else// player not bound?
-                            instance.sendGuildedMsg(translate("g-no-bind"), msg.getId());
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                }
+                String[] args = msg.getContent().split(" "); // /mgb subcommand arg1 arg2 ...
+                if(args.length == 1) return; // no subcommand. do nothing
+                String[] subCommandArgs = new String[args.length - 2]; // arg1 arg2 ...
+                System.arraycopy(args, 2, subCommandArgs, 0, subCommandArgs.length);
+                for(GuildedCommandExecutor executor : executors)
+                    if(executor.getCommandName().equals(args[1]))
+                        executor.execute(msg, subCommandArgs);
             }
             else // not a mgb command
             {

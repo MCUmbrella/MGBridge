@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
+import vip.floatationdevice.mgbridge.gce.Command_mkbind;
+import vip.floatationdevice.mgbridge.gce.Command_rmbind;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -59,7 +61,9 @@ public final class MGBridge extends JavaPlugin implements Listener
             BindManager.loadBindMap();
             g4JClient = new G4JClient(token);
             getCommand("mgb").setExecutor(new BukkitCommandExecutor());
-            gEventListener = new GuildedEventListener();
+            gEventListener = new GuildedEventListener()
+                    .registerExecutor(new Command_mkbind())
+                    .registerExecutor(new Command_rmbind());
             mgbRunning = true;
             sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
