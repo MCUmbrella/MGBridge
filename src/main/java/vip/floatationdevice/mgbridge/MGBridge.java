@@ -56,7 +56,7 @@ public final class MGBridge extends JavaPlugin implements Listener
             }
             g4JClient = new G4JClient(token);
             bindMgr = new BindManager();
-            getCommand("mgb").setExecutor(bindMgr);
+            getCommand("mgb").setExecutor(new BukkitCommandExecutor());
             mgbRunning = true;
             sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
         }
