@@ -2,5 +2,6 @@ package vip.floatationdevice.mgbridge;
 
 public interface GuildedCommandExecutor
 {
-    boolean onCommand(String[] args);
+    String getCommand();
+    boolean execute(String[] args);
 }
