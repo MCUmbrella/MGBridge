@@ -25,7 +25,7 @@ public class Command_list implements GuildedCommandExecutor
             list.add(p.getName());
         if(bindMap.containsKey(msg.getCreatorId()))
         {
-            instance.sendGuildedMsg(list.size() + ": " + list.toString(), msg.getId());
+            instance.sendGuildedMsg(list.size() + ": " + list, msg.getId());
             return true;
         }
         else return false;

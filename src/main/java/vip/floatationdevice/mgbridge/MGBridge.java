@@ -166,4 +166,9 @@ public final class MGBridge extends JavaPlugin implements Listener
         try {return Bukkit.getPlayer(u).getName();}
         catch(NullPointerException e) {return Bukkit.getOfflinePlayer(u).getName();}
     }
+
+    public GuildedEventListener getGEventListener()
+    {
+        return gEventListener;
+    }
 }

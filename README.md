@@ -1,9 +1,7 @@
 # MGBridge
-Formerly known as the "MC2GForward" project, this project is a bridge between Minecraft server and Guilded server.
-Its main function is forwarding chat messages, and may have other small useful functions in the future.
+Formerly known as the "MC2GForward" project, this project is a bridge between Minecraft server and Guilded server. Its main function is forwarding chat messages, and may have other small useful functions in the future.
 ## Note:
-- When the plugin is first installed on the server it will create an empty configuration file.
-You need to fill in your bot token, server ID and channel UUID to start using the plugin.
+- When the plugin is first installed on the server it will create an empty configuration file. You need to fill in your bot token, server ID and channel UUID to start using the plugin.
 - You are suggested to restart the server after setting up, not to reload the plugin.
 ## Configuration:
 All the configurations are explained in the [default config file](https://github.com/MCUmbrella/MGBridge/blob/main/src/main/resources/config.yml).
