@@ -13,3 +13,5 @@ All the configurations are explained in the [default config file](https://github
 2. Open Guilded client and type `/mgb mkbind <code>`.
 
 If you want to unbind, type `/mgb rmbind` at any side.
+## Extensions
+You can create your own MGB extension. Go to [the example extension's repository](https://github.com/MCUmbrella/MGBridgeExt) to see how a MGB extension is created.
