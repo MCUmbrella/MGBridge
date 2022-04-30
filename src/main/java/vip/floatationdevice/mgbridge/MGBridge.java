@@ -3,6 +3,7 @@ package vip.floatationdevice.mgbridge;
 import cn.hutool.json.JSONObject;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -11,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
+import vip.floatationdevice.guilded4j.object.Embed;
 import vip.floatationdevice.mgbridge.gce.Command_list;
 import vip.floatationdevice.mgbridge.gce.Command_mkbind;
 import vip.floatationdevice.mgbridge.gce.Command_ping;
@@ -68,7 +70,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     .registerExecutor(new Command_ping())
                     .registerExecutor(new Command_list());
             mgbRunning = true;
-            sendGuildedMsg(translate("mgb-started").replace("%VERSION%", getDescription().getVersion()), null);
+            sendGuildedEmbed(new Embed().setTitle(translate("mgb-started").replace("%VERSION%", getDescription().getVersion())).setColor(0xffffff), null, null, null);
         }
         catch(Throwable e)
         {
@@ -91,7 +93,8 @@ public final class MGBridge extends JavaPlugin implements Listener
         if(g4JClient != null)
         {
             ChatMessage result = null;
-            try {result = g4JClient.createChannelMessage(channel, translate("mgb-stopped"), null, null);}
+            // this time the message sending must be done in main thread or bukkit will complain about the plugin is registering a task while being disabled
+            try {result = g4JClient.createChannelMessage(channel, null, new Embed[]{new Embed().setTitle(translate("mgb-stopped")).setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite()).setColor(0xffffff)}, null, null, null);}
             catch(Exception e) {log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));}
             g4JClient = null;
             if(debug && result != null)
@@ -99,36 +102,36 @@ public final class MGBridge extends JavaPlugin implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onChat(AsyncPlayerChatEvent event)
     {
         String message = event.getMessage();
         if(!message.startsWith("/"))
-            sendGuildedMsg("<" + event.getPlayer().getName() + "> " + message, null);
+            sendGuildedMessage("<" + event.getPlayer().getName() + "> " + message, null, null, null);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-connected").replace("%PLAYER%", event.getPlayer().getName()), null);
+            sendGuildedEmbed(new Embed().setTitle(translate("player-connected").replace("%PLAYER%", event.getPlayer().getName())).setColor(0xffff00), null, null, null);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onUnusualLeave(PlayerKickEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-disconnected-unusual").replace("%PLAYER%", event.getPlayer().getName()).replace("%REASON%", event.getReason()), null);
+            sendGuildedMessage(translate("player-disconnected-unusual").replace("%PLAYER%", event.getPlayer().getName()).replace("%REASON%", event.getReason()), null, null, null);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent event)
     {
         if(forwardJoinLeaveEvents)
-            sendGuildedMsg(translate("player-disconnected").replace("%PLAYER%", event.getPlayer().getName()), null);
+            sendGuildedEmbed(new Embed().setTitle(translate("player-disconnected").replace("%PLAYER%", event.getPlayer().getName())).setColor(0xffff00), null, null, null);
     }
 
-    public void sendGuildedMsg(String msg, String replyTo)
+    public void sendGuildedMessage(String msg, String replyTo, Boolean isPrivate, Boolean isSilent)
     {
         Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
         {// fuck lambdas all my codes are lambda-free
@@ -140,7 +143,32 @@ public final class MGBridge extends JavaPlugin implements Listener
                     ChatMessage result = null;
                     try
                     {
-                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, replyTo == null ? null : new String[]{replyTo}, false);
+                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, null, replyTo == null ? null : new String[]{replyTo}, null, null);
+                    }
+                    catch(Exception e)
+                    {
+                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
+                    }
+                    if(debug && result != null)
+                        log.info("\n" + new JSONObject(result.toString()).toStringPretty());
+                }
+            }
+        });
+    }
+
+    public void sendGuildedEmbed(Embed emb, String replyTo, Boolean isPrivate, Boolean isSilent)
+    {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
+        {// fuck lambdas all my codes are lambda-free
+            @Override
+            public void run()
+            {
+                if(g4JClient != null)
+                {
+                    ChatMessage result = null;
+                    try
+                    {
+                        result = g4JClient.createChannelMessage(MGBridge.channel, null, new Embed[]{emb.setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite())}, replyTo == null ? null : new String[]{replyTo}, isPrivate, isSilent);
                     }
                     catch(Exception e)
                     {

@@ -2,6 +2,7 @@ package vip.floatationdevice.mgbridge.gce;
 
 import org.bukkit.Bukkit;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
+import vip.floatationdevice.guilded4j.object.Embed;
 import vip.floatationdevice.mgbridge.GuildedCommandExecutor;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
@@ -21,14 +22,14 @@ public class Command_mkbind implements GuildedCommandExecutor
     {
         if(args.length != 1)// incorrect command format?
         {
-            instance.sendGuildedMsg(translate("g-usage"), msg.getId());
+            instance.sendGuildedEmbed(new Embed().setTitle(translate("g-usage")).setColor(0xff0000), msg.getId(), null, null);
             return false;
         }
         else// right usage?
         {
             if(bindMap.containsKey(msg.getCreatorId()))// player already bound?
             {
-                instance.sendGuildedMsg(translate("g-already-bound").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))), msg.getId());
+                instance.sendGuildedEmbed(new Embed().setTitle(translate("g-already-bound").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId())))).setColor(0xff0000), msg.getId(), null, null);
                 return false;
             }
             else// player not bound?
@@ -43,14 +44,14 @@ public class Command_mkbind implements GuildedCommandExecutor
                         Bukkit.getPlayer(bindMap.get(msg.getCreatorId())).sendMessage(translate("m-bind-success"));
                     }
                     catch(NullPointerException ignored) {}
-                    instance.sendGuildedMsg(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))), msg.getId());
+                    instance.sendGuildedEmbed(new Embed().setTitle(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId())))).setColor(0x00ff00), msg.getId(), null, null);
                     log.info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
                     saveBindMap();
                     return true;
                 }
                 else// code not in pending list?
                 {
-                    instance.sendGuildedMsg(translate("invalid-code"), msg.getId());
+                    instance.sendGuildedEmbed(new Embed().setTitle(translate("invalid-code")).setColor(0xff0000), msg.getId(), null, null);
                     return false;
                 }
             }

@@ -19,7 +19,7 @@ public class Command_ping implements GuildedCommandExecutor
     {
         if(bindMap.containsKey(msg.getCreatorId()))
         {
-            instance.sendGuildedMsg("pong", msg.getId());
+            instance.sendGuildedMessage("pong", msg.getId(), null, null);
             return true;
         }
         else return false;

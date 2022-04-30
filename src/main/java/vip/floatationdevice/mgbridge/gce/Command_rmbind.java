@@ -2,6 +2,7 @@ package vip.floatationdevice.mgbridge.gce;
 
 import org.bukkit.Bukkit;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
+import vip.floatationdevice.guilded4j.object.Embed;
 import vip.floatationdevice.mgbridge.GuildedCommandExecutor;
 
 import java.util.UUID;
@@ -31,14 +32,14 @@ public class Command_rmbind implements GuildedCommandExecutor
             }
             catch(Exception ignored) {}
             UUID removed = bindMap.remove(msg.getCreatorId());
-            instance.sendGuildedMsg(translate("g-unbind-success"), msg.getId());
+            instance.sendGuildedEmbed(new Embed().setTitle(translate("g-unbind-success")).setColor(0x00ff00), msg.getId(), null, null);
             log.info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
             saveBindMap();
             return true;
         }
         else// player not bound?
         {
-            instance.sendGuildedMsg(translate("g-no-bind"), msg.getId());
+            instance.sendGuildedEmbed(new Embed().setTitle(translate("g-no-bind")).setColor(0xff0000), msg.getId(), null, null);
             return false;
         }
     }
