@@ -37,6 +37,6 @@ g-already-bound: "Your account has been bound to %PLAYER% before"
 
 mgb-started: "MGBridge started"
 mgb-stopped: "MGBridge stopped"
-player-connected: "%PLAYER% connected"
-player-disconnected: "%PLAYER% disconnected"
+player-connected: ":arrow_forward: %PLAYER% connected"
+player-disconnected: ":arrow_backward: %PLAYER% disconnected"
 player-disconnected-unusual: "`(%PLAYER% lost connection: %REASON%)`"

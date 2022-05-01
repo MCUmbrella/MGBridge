@@ -37,6 +37,6 @@ g-already-bound: "你的Guilded账户已绑定至%PLAYER%"
 
 mgb-started: "MGBridge已启动"
 mgb-stopped: "MGBridge已停止"
-player-connected: "%PLAYER%加入了游戏"
-player-disconnected: "%PLAYER%离开了游戏"
+player-connected: ":arrow_forward: %PLAYER%加入了游戏"
+player-disconnected: ":arrow_backward: %PLAYER%离开了游戏"
 player-disconnected-unusual: "`(%PLAYER%连接中断：%REASON%)`"
