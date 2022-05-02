@@ -21,15 +21,15 @@ public class Command_list implements GuildedCommandExecutor
     @Override
     public boolean execute(ChatMessage msg, String[] args)
     {
-        ArrayList<String> list = new ArrayList<>();
-        for (Player p : instance.getServer().getOnlinePlayers())
-            list.add(p.getName());
-        list.sort(String::compareToIgnoreCase);
-        StringBuilder sb = new StringBuilder();
-        for (String s : list)
-            sb.append(s).append("\n");
         if(bindMap.containsKey(msg.getCreatorId()))
         {
+            ArrayList<String> list = new ArrayList<>();
+            for (Player p : instance.getServer().getOnlinePlayers())
+                list.add(p.getName());
+            list.sort(String::compareToIgnoreCase);
+            StringBuilder sb = new StringBuilder();
+            for (String s : list)
+                sb.append(s).append("\n");
             instance.sendGuildedEmbed(new Embed().setTitle(String.valueOf(list.size())).setDescription(sb.toString()).setColor(0xffff00), msg.getId(), null, true);
             return true;
         }
