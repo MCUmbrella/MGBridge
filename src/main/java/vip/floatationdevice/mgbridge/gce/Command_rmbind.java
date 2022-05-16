@@ -16,10 +16,7 @@ import static vip.floatationdevice.mgbridge.MGBridge.instance;
 public class Command_rmbind implements GuildedCommandExecutor
 {
     @Override
-    public String getCommandName()
-    {
-        return "rmbind";
-    }
+    public String getCommandName(){return "rmbind";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

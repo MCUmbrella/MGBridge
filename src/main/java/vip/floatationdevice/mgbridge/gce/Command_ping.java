@@ -9,10 +9,7 @@ import static vip.floatationdevice.mgbridge.MGBridge.instance;
 public class Command_ping implements GuildedCommandExecutor
 {
     @Override
-    public String getCommandName()
-    {
-        return "ping";
-    }
+    public String getCommandName(){return "ping";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

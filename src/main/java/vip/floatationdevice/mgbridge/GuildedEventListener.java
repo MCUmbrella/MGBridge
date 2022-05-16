@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import vip.floatationdevice.guilded4j.G4JWebSocketClient;
 import vip.floatationdevice.guilded4j.event.ChatMessageCreatedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketClosedEvent;
-import vip.floatationdevice.guilded4j.event.GuildedWebSocketInitializedEvent;
+import vip.floatationdevice.guilded4j.event.GuildedWebSocketWelcomeEvent;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
 import java.net.InetSocketAddress;
@@ -43,7 +43,7 @@ public class GuildedEventListener
         throw new IllegalArgumentException("No executor found for command " + commandName);
     }
 
-    public void clearExecutors()
+    public void unregisterAllExecutors()
     {
         executors.clear();
     }
@@ -60,10 +60,7 @@ public class GuildedEventListener
     }
 
     @Subscribe
-    public void onG4JConnectionOpened(GuildedWebSocketInitializedEvent event)
-    {
-        log.info(translate("connected"));
-    }
+    public void onG4JConnectionOpened(GuildedWebSocketWelcomeEvent event){log.info(translate("connected"));}
 
     @Subscribe
     public void onG4JConnectionClosed(GuildedWebSocketClosedEvent event)

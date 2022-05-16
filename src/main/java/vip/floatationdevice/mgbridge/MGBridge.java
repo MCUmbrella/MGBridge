@@ -87,14 +87,14 @@ public final class MGBridge extends JavaPlugin implements Listener
         if(gEventListener != null)
         {
             gEventListener.ws.close();
-            gEventListener.clearExecutors();
+            gEventListener.unregisterAllExecutors();
             gEventListener = null;
         }
         if(g4JClient != null)
         {
             ChatMessage result = null;
             // this time the message sending must be done in main thread or bukkit will complain about the plugin is registering a task while being disabled
-            try {result = g4JClient.createChannelMessage(channel, null, new Embed[]{new Embed().setTitle(translate("mgb-stopped")).setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite()).setColor(0xffffff)}, null, null, null);}
+            try {result = g4JClient.getChatMessageManager().createChannelMessage(channel, null, new Embed[]{new Embed().setTitle(translate("mgb-stopped")).setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite()).setColor(0xffffff)}, null, null, null);}
             catch(Exception e) {log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));}
             g4JClient = null;
             if(debug && result != null)
@@ -143,7 +143,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     ChatMessage result = null;
                     try
                     {
-                        result = g4JClient.createChannelMessage(MGBridge.channel, msg, null, replyTo == null ? null : new String[]{replyTo}, null, null);
+                        result = g4JClient.getChatMessageManager().createChannelMessage(MGBridge.channel, msg, null, replyTo == null ? null : new String[]{replyTo}, null, null);
                     }
                     catch(Exception e)
                     {
@@ -168,7 +168,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     ChatMessage result = null;
                     try
                     {
-                        result = g4JClient.createChannelMessage(MGBridge.channel, null, new Embed[]{emb.setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite())}, replyTo == null ? null : new String[]{replyTo}, isPrivate, isSilent);
+                        result = g4JClient.getChatMessageManager().createChannelMessage(MGBridge.channel, null, new Embed[]{emb.setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite())}, replyTo == null ? null : new String[]{replyTo}, isPrivate, isSilent);
                     }
                     catch(Exception e)
                     {

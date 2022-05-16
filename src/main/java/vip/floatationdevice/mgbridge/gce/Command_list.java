@@ -13,10 +13,7 @@ import static vip.floatationdevice.mgbridge.MGBridge.instance;
 public class Command_list implements GuildedCommandExecutor
 {
     @Override
-    public String getCommandName()
-    {
-        return "list";
-    }
+    public String getCommandName(){return "list";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)
