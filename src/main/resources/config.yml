@@ -12,9 +12,11 @@ channel:
 forwardJoinLeaveEvents: true
 # Socks proxy address. Enter an address (e.g. "127.0.0.1:1080") to use a proxy, enter "default" to use the default proxy, or leave blank to not use a proxy.
 socksProxy:
-# The format of the messages from Minecraft to Guilded. You can use the following variables: {PLAYER}, {MESSAGE}
+# The format of the chat messages from Minecraft to Guilded. You can use the following variables: {PLAYER}, {MESSAGE}
+# You can disable forwarding messages from Minecraft to Guilded by setting this to "disabled"
 toGuildedMessageFormat: "<{PLAYER}> {MESSAGE}"
-# The format of the messages sent from Guilded server to Minecraft. You can use the following variables: {PLAYER}, {MESSAGE}
-toMinecraftMessageFormat: "§e<§r<{PLAYER}§e> §r{MESSAGE}"
+# The format of the chat messages sent from Guilded server to Minecraft. You can use the following variables: {PLAYER}, {MESSAGE}
+# You can disable forwarding messages from Guilded to Minecraft by setting this to "disabled"
+toMinecraftMessageFormat: "§e<§r{PLAYER}§e> §r{MESSAGE}"
 # Print the response after forwarding a message to Guilded
 debug: false

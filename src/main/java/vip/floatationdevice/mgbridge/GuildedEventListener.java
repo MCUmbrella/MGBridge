@@ -95,9 +95,9 @@ public class GuildedEventListener
                     if(executor.getCommandName().equals(args[1]))
                         executor.execute(msg, subCommandArgs);
             }
-            else // not a mgb command
-            {
-                if(!msg.getContent().startsWith("/") && bindMap.containsKey(msg.getCreatorId())) // guilded user bound?
+            else // not a mgb command. consider it as normal message
+            { // check if G->M forwarding is enabled, the message is not a command, and the message is from a user who is bound to Minecraft
+                if(toMinecraftMessageFormat != null && !msg.getContent().startsWith("/") && bindMap.containsKey(msg.getCreatorId()))
                     Bukkit.broadcastMessage(toMinecraftMessageFormat.replace("{PLAYER}", getPlayerName(bindMap.get(msg.getCreatorId()))).replace("{MESSAGE}", msg.getContent()));
             }
         }

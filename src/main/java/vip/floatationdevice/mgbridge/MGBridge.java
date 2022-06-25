@@ -117,8 +117,9 @@ public final class MGBridge extends JavaPlugin implements Listener
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChat(AsyncPlayerChatEvent event)
     {
+        if(event.isCancelled()) return; // don't forward cancelled events
         String message = event.getMessage();
-        if(!message.startsWith("/"))
+        if(toGuildedMessageFormat != null && !message.startsWith("/")) // check if M->G forwarding is enabled and the message is not a command
             sendGuildedMessage(toGuildedMessageFormat.replace("{PLAYER}", event.getPlayer().getName()).replace("{MESSAGE}", message), null, null, null);
     }
 

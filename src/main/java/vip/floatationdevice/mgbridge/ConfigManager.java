@@ -13,7 +13,7 @@ public class ConfigManager
     static String socksProxyHost = null; // socks proxy settings
     static String socksProxyPort = null;
     static String toGuildedMessageFormat = "<{PLAYER}> {MESSAGE}"; // messages sent to guilded
-    static String toMinecraftMessageFormat = "§e<§r<{PLAYER}§e> §r{MESSAGE}"; // messages sent to minecraft
+    static String toMinecraftMessageFormat = "§e<§r{PLAYER}§e> §r{MESSAGE}"; // messages sent to minecraft
     static boolean loadConfig()
     {
         File cfgFile = new File(instance.getDataFolder(), "config.yml");
@@ -31,7 +31,7 @@ public class ConfigManager
             if(!notSet(cfg.getString("socksProxy"))) // is socksProxy field set?
             {
                 String[] socksProxy = cfg.getString("socksProxy").split(":");
-                if(cfg.getString("socksProxy").equals("default"))
+                if("default".equalsIgnoreCase(cfg.getString("socksProxy")))
                 { // use proxy settings in JVM arguments
                     socksProxyHost = System.getProperty("socksProxyHost");
                     socksProxyPort = System.getProperty("socksProxyPort");
@@ -43,8 +43,14 @@ public class ConfigManager
                 }
             }
             // set message formatter
-            toGuildedMessageFormat = cfg.getString("toGuildedMessageFormat", toGuildedMessageFormat);
-            toMinecraftMessageFormat = cfg.getString("toMinecraftMessageFormat", toMinecraftMessageFormat);
+            if("disabled".equalsIgnoreCase(cfg.getString("toGuildedMessageFormat")))
+                toGuildedMessageFormat = null;
+            else
+                toGuildedMessageFormat = cfg.getString("toGuildedMessageFormat", toGuildedMessageFormat);
+            if("disabled".equalsIgnoreCase(cfg.getString("toMinecraftMessageFormat")))
+                toMinecraftMessageFormat = null;
+            else
+                toMinecraftMessageFormat = cfg.getString("toMinecraftMessageFormat", toMinecraftMessageFormat);
             return true;
         }
     }
