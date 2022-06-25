@@ -20,8 +20,8 @@ import static vip.floatationdevice.mgbridge.MGBridge.*;
 public class GuildedEventListener
 {
     G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
-    private final String socksProxyHost = System.getProperty("socksProxyHost"); // socks proxy settings in the arguments
-    private final String socksProxyPort = System.getProperty("socksProxyPort");
+    private String socksProxyHost = null; // socks proxy settings
+    private String socksProxyPort = null;
     private final ArrayList<GuildedCommandExecutor> executors = new ArrayList<>(); // list of guilded commands to execute
 
     public GuildedEventListener registerExecutor(GuildedCommandExecutor executor)
@@ -52,7 +52,20 @@ public class GuildedEventListener
     {
         log.info(translate("connecting"));
         ws = new G4JWebSocketClient(token);
-        // set socks proxy if it is set in the arguments
+        if(!notSet(ConfigManager.cfg.getString("socksProxy"))) // is socks proxy field set?
+        {
+            String[] socksProxy = ConfigManager.cfg.getString("socksProxy").split(":");
+            if(ConfigManager.cfg.getString("socksProxy").equals("default"))
+            { // use proxy settings in JVM arguments
+                socksProxyHost = System.getProperty("socksProxyHost");
+                socksProxyPort = System.getProperty("socksProxyPort");
+            }
+            else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$"))
+            { // socks proxy is set and valid
+                socksProxyHost = socksProxy[0];
+                socksProxyPort = socksProxy[1];
+            }
+        }
         if(socksProxyHost != null && socksProxyPort != null)
             ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
         ws.eventBus.register(this);
@@ -84,7 +97,7 @@ public class GuildedEventListener
     @Subscribe
     public void onGuildedMessage(ChatMessageCreatedEvent event)
     {
-        ChatMessage msg = event.getChatMessageObject();// the received ChatMessage object
+        ChatMessage msg = event.getChatMessage();// the received ChatMessage object
         if(msg.getServerId().equals(server) && msg.getChannelId().equals(channel))// in the right server and channel?
         {
             if(msg.getContent().startsWith("/mgb "))

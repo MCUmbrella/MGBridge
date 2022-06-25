@@ -10,5 +10,7 @@ server:
 channel:
 # Forward player join/quit messages
 forwardJoinLeaveEvents: true
+# Socks proxy address. Enter an address (e.g. "127.0.0.1:1080") to use a proxy, enter "default" to use the default proxy, or leave blank to not use a proxy.
+socksProxy:
 # Print the response after forwarding a message to Guilded
 debug: false
