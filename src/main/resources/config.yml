@@ -14,9 +14,9 @@ forwardJoinLeaveEvents: true
 socksProxy:
 # The format of the chat messages from Minecraft to Guilded. You can use the following variables: {PLAYER}, {MESSAGE}
 # You can disable forwarding messages from Minecraft to Guilded by setting this to "disabled"
-toGuildedMessageFormat: "<{PLAYER}> {MESSAGE}"
+toGuildedMessageFormat: "**{PLAYER} ⟫** {MESSAGE}"
 # The format of the chat messages sent from Guilded server to Minecraft. You can use the following variables: {PLAYER}, {MESSAGE}
 # You can disable forwarding messages from Guilded to Minecraft by setting this to "disabled"
-toMinecraftMessageFormat: "§e<§r{PLAYER}§e> §r{MESSAGE}"
+toMinecraftMessageFormat: "[§eGuilded§r] <{PLAYER}> {MESSAGE}"
 # Print the response after forwarding a message to Guilded
 debug: false

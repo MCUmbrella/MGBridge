@@ -49,6 +49,11 @@ public class GuildedEventListener
 
     public GuildedEventListener()
     {
+        connect();
+    }
+
+    void connect()
+    {
         log.info(translate("connecting"));
         ws = new G4JWebSocketClient(token);
         if(socksProxyHost != null && socksProxyPort != null)
@@ -57,26 +62,28 @@ public class GuildedEventListener
         ws.connect();
     }
 
+    void disconnect()
+    {
+        // unregister gEventListener from event bus first to prevent automatic reconnection
+        ws.eventBus.unregister(this);
+        ws.close();
+        log.info(translate("disconnected"));
+    }
+
     @Subscribe
     public void onG4JConnectionOpened(GuildedWebSocketWelcomeEvent event){log.info(translate("connected"));}
 
     @Subscribe
     public void onG4JConnectionClosed(GuildedWebSocketClosedEvent event)
     {
-        if(mgbRunning)
-        {
-            // if the plugin is running normally but the connection was closed
-            // then we can consider it as unexpected and do a reconnection
-            log.warning(translate("disconnected-unexpected"));
-            ws = new G4JWebSocketClient(token);
-            if(socksProxyHost != null && socksProxyPort != null)
-                ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
-            ws.eventBus.register(this);
-            ws.connect();
-        }
-        else
-            // the plugin is being disabled or the server is stopping, so we can just ignore this
-            log.info(translate("disconnected"));
+        // if the plugin is running normally but the connection was closed
+        // then we can consider it as unexpected and do a reconnection
+        log.warning(translate("disconnected-unexpected"));
+        ws = new G4JWebSocketClient(token);
+        if(socksProxyHost != null && socksProxyPort != null)
+            ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
+        ws.eventBus.register(this);
+        ws.connect();
     }
 
     @Subscribe

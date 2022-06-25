@@ -4,12 +4,20 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-import static vip.floatationdevice.mgbridge.MGBridge.instance;
-import static vip.floatationdevice.mgbridge.MGBridge.notSet;
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
+import static vip.floatationdevice.mgbridge.MGBridge.*;
 
 public class ConfigManager
 {
     static YamlConfiguration cfg;
+
+    static String lang;
+    static String token;
+    static String server;
+    static String channel;
+
+    static boolean forwardJoinLeaveEvents = true;
+    static boolean debug = false;
     static String socksProxyHost = null; // socks proxy settings
     static String socksProxyPort = null;
     static String toGuildedMessageFormat = "<{PLAYER}> {MESSAGE}"; // messages sent to guilded
@@ -18,8 +26,8 @@ public class ConfigManager
     {
         File cfgFile = new File(instance.getDataFolder(), "config.yml");
         if (!cfgFile.exists())
-        {
-            instance.getLogger().severe("Config file not found and an empty one will be created. Set the token and channel UUID and RESTART server.");
+        { // create default config file if it doesn't exist
+            log.severe("Config file not found and an empty one will be created. Set the token and channel UUID and RESTART server.");
             instance.saveDefaultConfig();
             return false;
         }
@@ -27,6 +35,20 @@ public class ConfigManager
         {
             // init configuration system
             cfg = YamlConfiguration.loadConfiguration(cfgFile);
+            lang = cfg.getString("language");
+            token = cfg.getString("token");
+            server = cfg.getString("server");
+            channel = cfg.getString("channel");
+            forwardJoinLeaveEvents = cfg.getBoolean("forwardJoinLeaveEvents", true);
+            debug = cfg.getBoolean("debug", false);
+            I18nUtil.setLanguage(lang);
+            log.info("Language: " + translate("language") + " (" + lang + ") by " + translate("language-file-contributor"));
+            if(notSet(lang, token, server, channel) || !lang.matches("^[a-z]{2}_[A-Z]{2}$") || channel.length() != 36 || server.length() != 8)
+            {
+                log.severe(translate("invalid-config"));
+                return false;
+            }
+            BindManager.loadBindMap();
             // set socks proxy
             if(!notSet(cfg.getString("socksProxy"))) // is socksProxy field set?
             {
@@ -37,7 +59,7 @@ public class ConfigManager
                     socksProxyPort = System.getProperty("socksProxyPort");
                 }
                 else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$"))
-                { // socks proxy is set and valid
+                { // socksProxy is set and valid
                     socksProxyHost = socksProxy[0];
                     socksProxyPort = socksProxy[1];
                 }

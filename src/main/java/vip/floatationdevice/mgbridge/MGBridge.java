@@ -21,7 +21,7 @@ import vip.floatationdevice.mgbridge.gce.Command_rmbind;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import static vip.floatationdevice.mgbridge.ConfigManager.cfg;
+import static vip.floatationdevice.mgbridge.ConfigManager.*;
 import static vip.floatationdevice.mgbridge.ConfigManager.toGuildedMessageFormat;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
@@ -29,12 +29,8 @@ public final class MGBridge extends JavaPlugin implements Listener
 {
     public static MGBridge instance;
     public static Logger log;
-    static String lang, token, server, channel;
-    static Boolean mgbRunning = false;
     G4JClient g4JClient = null;
     GuildedEventListener gEventListener = null;
-    Boolean forwardJoinLeaveEvents = true;
-    Boolean debug = false;
 
     @Override
     public void onEnable()
@@ -49,20 +45,6 @@ public final class MGBridge extends JavaPlugin implements Listener
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            lang = cfg.getString("language");
-            token = cfg.getString("token");
-            server = cfg.getString("server");
-            channel = cfg.getString("channel");
-            forwardJoinLeaveEvents = cfg.getBoolean("forwardJoinLeaveEvents");
-            debug = cfg.getBoolean("debug");
-            I18nUtil.setLanguage(lang);
-            if(notSet(lang, token, server, channel) || !lang.matches("^[a-z]{2}_[A-Z]{2}$") || channel.length() != 36 || server.length() != 8)
-            {
-                log.severe(translate("invalid-config"));
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            BindManager.loadBindMap();
             g4JClient = new G4JClient(token);
             getCommand("mgb").setExecutor(new BukkitCommandExecutor());
             gEventListener = new GuildedEventListener()
@@ -70,7 +52,6 @@ public final class MGBridge extends JavaPlugin implements Listener
                     .registerExecutor(new Command_rmbind())
                     .registerExecutor(new Command_ping())
                     .registerExecutor(new Command_list());
-            mgbRunning = true;
             sendGuildedEmbed(new Embed().setTitle(translate("mgb-started").replace("%VERSION%", getDescription().getVersion())).setColor(0xffffff), null, null, null);
         }
         catch(Throwable e)
@@ -84,10 +65,9 @@ public final class MGBridge extends JavaPlugin implements Listener
     @Override
     public void onDisable()
     {
-        mgbRunning = false;
         if(gEventListener != null)
         {
-            gEventListener.ws.close();
+            gEventListener.disconnect();
             gEventListener.unregisterAllExecutors();
             gEventListener = null;
         }
@@ -158,7 +138,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     {
                         result = g4JClient.getChatMessageManager()
                                 .createChannelMessage(
-                                        MGBridge.channel,
+                                        channel,
                                         msg,
                                         null,
                                         replyTo == null ? null : new String[]{replyTo},
@@ -168,7 +148,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     }
                     catch(Exception e)
                     {
-                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
+                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.getMessage()));
                     }
                     if(debug && result != null)
                         log.info("\n" + new JSONObject(result.toString()).toStringPretty());
@@ -191,7 +171,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     {
                         result = g4JClient.getChatMessageManager()
                                 .createChannelMessage(
-                                        MGBridge.channel,
+                                        channel,
                                         null,
                                         new Embed[]{emb.setAuthorName("MGBridge " + getDescription().getVersion()).setAuthorUrl(getDescription().getWebsite())},
                                         replyTo == null ? null : new String[]{replyTo},
@@ -201,7 +181,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     }
                     catch(Exception e)
                     {
-                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));
+                        log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.getMessage()));
                     }
                     if(debug && result != null)
                         log.info("\n" + new JSONObject(result.toString()).toStringPretty());

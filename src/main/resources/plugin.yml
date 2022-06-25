@@ -7,3 +7,13 @@ website: https://github.com/MCUmbrella/MGBridge
 commands:
   mgb:
     description: The main command of MGBridge
+permissions:
+  mgbridge.mkbind:
+    description: Allows the user to bind to Guilded account
+    default: true
+  mgbridge.rmbind:
+    description: Allows the user to unbind from Guilded account
+    default: true
+  mgbridge.reload:
+    description: Allows the user to reload the plugin
+    default: op
