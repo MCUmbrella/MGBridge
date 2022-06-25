@@ -15,13 +15,12 @@ import java.util.ArrayList;
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.*;
+import static vip.floatationdevice.mgbridge.ConfigManager.*;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class GuildedEventListener
 {
     G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
-    private String socksProxyHost = null; // socks proxy settings
-    private String socksProxyPort = null;
     private final ArrayList<GuildedCommandExecutor> executors = new ArrayList<>(); // list of guilded commands to execute
 
     public GuildedEventListener registerExecutor(GuildedCommandExecutor executor)
@@ -52,20 +51,6 @@ public class GuildedEventListener
     {
         log.info(translate("connecting"));
         ws = new G4JWebSocketClient(token);
-        if(!notSet(ConfigManager.cfg.getString("socksProxy"))) // is socks proxy field set?
-        {
-            String[] socksProxy = ConfigManager.cfg.getString("socksProxy").split(":");
-            if(ConfigManager.cfg.getString("socksProxy").equals("default"))
-            { // use proxy settings in JVM arguments
-                socksProxyHost = System.getProperty("socksProxyHost");
-                socksProxyPort = System.getProperty("socksProxyPort");
-            }
-            else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$"))
-            { // socks proxy is set and valid
-                socksProxyHost = socksProxy[0];
-                socksProxyPort = socksProxy[1];
-            }
-        }
         if(socksProxyHost != null && socksProxyPort != null)
             ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
         ws.eventBus.register(this);
@@ -113,7 +98,7 @@ public class GuildedEventListener
             else // not a mgb command
             {
                 if(!msg.getContent().startsWith("/") && bindMap.containsKey(msg.getCreatorId())) // guilded user bound?
-                    Bukkit.broadcastMessage("§e<§r" + getPlayerName(bindMap.get(msg.getCreatorId())) + "§e> §r" + msg.getContent());
+                    Bukkit.broadcastMessage(toMinecraftMessageFormat.replace("{PLAYER}", getPlayerName(bindMap.get(msg.getCreatorId()))).replace("{MESSAGE}", msg.getContent()));
             }
         }
     }

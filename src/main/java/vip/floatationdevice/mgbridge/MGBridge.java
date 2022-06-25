@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import static vip.floatationdevice.mgbridge.ConfigManager.cfg;
+import static vip.floatationdevice.mgbridge.ConfigManager.toGuildedMessageFormat;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 public final class MGBridge extends JavaPlugin implements Listener
@@ -118,7 +119,7 @@ public final class MGBridge extends JavaPlugin implements Listener
     {
         String message = event.getMessage();
         if(!message.startsWith("/"))
-            sendGuildedMessage("<" + event.getPlayer().getName() + "> " + message, null, null, null);
+            sendGuildedMessage(toGuildedMessageFormat.replace("{PLAYER}", event.getPlayer().getName()).replace("{MESSAGE}", message), null, null, null);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

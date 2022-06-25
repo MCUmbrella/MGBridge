@@ -4,6 +4,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
+import static vip.floatationdevice.mgbridge.ConfigManager.toGuildedMessageFormat;
+import static vip.floatationdevice.mgbridge.ConfigManager.toMinecraftMessageFormat;
 import static vip.floatationdevice.mgbridge.MGBridge.notSet;
 
 public class Test
@@ -32,5 +34,15 @@ public class Test
         }
         System.out.println("socksProxyHost: " + socksProxyHost);
         System.out.println("socksProxyPort: " + socksProxyPort);
+        toGuildedMessageFormat = cfg.getString("toGuildedMessageFormat", toGuildedMessageFormat);
+        toMinecraftMessageFormat = cfg.getString("toMinecraftMessageFormat", toMinecraftMessageFormat);
+        System.out.println("toGuildedMessageFormat: " + toGuildedMessageFormat);
+        System.out.println("toMinecraftMessageFormat: " + toMinecraftMessageFormat);
+        String mcPlayer = "MCUmbrella";
+        String mcMessage = "Hello world!";
+        System.out.println(toMinecraftMessageFormat.replace("{PLAYER}", mcPlayer).replace("{MESSAGE}", mcMessage));
+        String gPlayer = "GuildedUmbrella";
+        String gMessage = "Hello world from Guilded!";
+        System.out.println(toGuildedMessageFormat.replace("{PLAYER}", gPlayer).replace("{MESSAGE}", gMessage));
     }
 }
