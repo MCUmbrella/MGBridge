@@ -21,13 +21,22 @@ public class Command_list implements GuildedCommandExecutor
         if(bindMap.containsKey(msg.getCreatorId()))
         {
             ArrayList<String> list = new ArrayList<>();
-            for (Player p : instance.getServer().getOnlinePlayers())
+            for(Player p : instance.getServer().getOnlinePlayers())
                 list.add(p.getName());
-            list.sort(String::compareToIgnoreCase);
             StringBuilder sb = new StringBuilder();
-            for (String s : list)
+            for(String s : list)
                 sb.append(s).append("\n");
-            instance.sendGuildedEmbed(new Embed().setTitle(String.valueOf(list.size())).setDescription(sb.toString()).setColor(0xffff00), msg.getId(), null, true);
+            if(list.size() != 0)
+                sb.deleteCharAt(sb.length() - 1);
+            instance.sendGuildedEmbed(
+                    new Embed()
+                            .setTitle(String.valueOf(list.size()))
+                            .setDescription(sb.toString())
+                            .setColor(0xffff00),
+                    msg.getId(),
+                    null,
+                    true
+            );
             return true;
         }
         else return false;
