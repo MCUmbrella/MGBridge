@@ -37,7 +37,6 @@ public final class MGBridge extends JavaPlugin implements Listener
     {
         instance = this;
         log = getLogger();
-        Bukkit.getPluginManager().registerEvents(this, this);
         try
         {
             if(!ConfigManager.loadConfig())
@@ -53,6 +52,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     .registerExecutor(new Command_ping())
                     .registerExecutor(new Command_list());
             g4JClient.getChatMessageManager().setProxy(proxy);
+            Bukkit.getPluginManager().registerEvents(this, this);
             sendGuildedEmbed(new Embed().setTitle(translate("mgb-started").replace("%VERSION%", getDescription().getVersion())).setColor(0xffffff), null, null, null);
         }
         catch(Throwable e)

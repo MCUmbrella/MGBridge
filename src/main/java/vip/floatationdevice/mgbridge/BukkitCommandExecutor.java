@@ -9,6 +9,7 @@ import vip.floatationdevice.guilded4j.G4JClient;
 import java.util.Random;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
+import static vip.floatationdevice.mgbridge.ConfigManager.proxy;
 import static vip.floatationdevice.mgbridge.ConfigManager.token;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.*;
@@ -28,6 +29,7 @@ public class BukkitCommandExecutor implements CommandExecutor
             catch(IllegalArgumentException ignored){}
             ConfigManager.loadConfig();
             instance.g4JClient = new G4JClient(token);
+            instance.g4JClient.setProxy(proxy);
             instance.gEventListener.connect();
             sender.sendMessage("MGBridge reloaded");
             return true;

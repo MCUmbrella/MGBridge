@@ -66,7 +66,8 @@ public class ConfigManager
                         proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxy[0], Integer.parseInt(socksProxy[1])));
                     }
                     catch(Exception ignored) {}
-            }            // set message formatter
+            }
+            // set message formatter
             if("disabled".equalsIgnoreCase(cfg.getString("toGuildedMessageFormat")))
                 toGuildedMessageFormat = null;
             else
