@@ -55,11 +55,18 @@ public class ConfigManager
             {
                 String[] socksProxy = cfg.getString("socksProxy").split(":");
                 if("default".equalsIgnoreCase(cfg.getString("socksProxy"))) // use proxy settings in JVM arguments
-                    proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(System.getProperty("socksProxyHost"), Integer.parseInt(System.getProperty("socksProxyPort"))));
+                    try
+                    {
+                        proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(System.getProperty("socksProxyHost"), Integer.parseInt(System.getProperty("socksProxyPort"))));
+                    }
+                    catch(Exception ignored) {}
                 else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$")) // socksProxy is set and valid
-                    proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxy[0], Integer.parseInt(socksProxy[1])));
-            }
-            // set message formatter
+                    try
+                    {
+                        proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxy[0], Integer.parseInt(socksProxy[1])));
+                    }
+                    catch(Exception ignored) {}
+            }            // set message formatter
             if("disabled".equalsIgnoreCase(cfg.getString("toGuildedMessageFormat")))
                 toGuildedMessageFormat = null;
             else
