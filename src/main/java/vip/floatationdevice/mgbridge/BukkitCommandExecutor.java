@@ -29,7 +29,7 @@ public class BukkitCommandExecutor implements CommandExecutor
             catch(IllegalArgumentException ignored){}
             ConfigManager.loadConfig();
             instance.g4JClient = new G4JClient(token);
-            instance.g4JClient.setProxy(proxy);
+            instance.g4JClient.getChatMessageManager().setProxy(proxy);
             instance.gEventListener.connect();
             sender.sendMessage("MGBridge reloaded");
             return true;
