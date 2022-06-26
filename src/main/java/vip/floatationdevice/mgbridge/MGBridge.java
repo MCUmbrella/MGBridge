@@ -52,6 +52,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     .registerExecutor(new Command_rmbind())
                     .registerExecutor(new Command_ping())
                     .registerExecutor(new Command_list());
+            g4JClient.getChatMessageManager().setProxy(proxy);
             sendGuildedEmbed(new Embed().setTitle(translate("mgb-started").replace("%VERSION%", getDescription().getVersion())).setColor(0xffffff), null, null, null);
         }
         catch(Throwable e)

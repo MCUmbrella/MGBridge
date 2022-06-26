@@ -8,8 +8,6 @@ import vip.floatationdevice.guilded4j.event.GuildedWebSocketClosedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketWelcomeEvent;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
@@ -56,8 +54,7 @@ public class GuildedEventListener
     {
         log.info(translate("connecting"));
         ws = new G4JWebSocketClient(token);
-        if(socksProxyHost != null && socksProxyPort != null)
-            ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
+        ws.setProxy(proxy);
         ws.eventBus.register(this);
         ws.connect();
     }
@@ -80,8 +77,7 @@ public class GuildedEventListener
         // then we can consider it as unexpected and do a reconnection
         log.warning(translate("disconnected-unexpected"));
         ws = new G4JWebSocketClient(token);
-        if(socksProxyHost != null && socksProxyPort != null)
-            ws.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxyHost, Integer.parseInt(socksProxyPort))));
+        ws.setProxy(proxy);
         ws.eventBus.register(this);
         ws.connect();
     }

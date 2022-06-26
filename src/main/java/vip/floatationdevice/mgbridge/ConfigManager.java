@@ -3,6 +3,8 @@ package vip.floatationdevice.mgbridge;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.*;
@@ -18,8 +20,7 @@ public class ConfigManager
 
     static boolean forwardJoinLeaveEvents = true;
     static boolean debug = false;
-    static String socksProxyHost = null; // socks proxy settings
-    static String socksProxyPort = null;
+    static Proxy proxy = Proxy.NO_PROXY;
     static String toGuildedMessageFormat = "<{PLAYER}> {MESSAGE}"; // messages sent to guilded
     static String toMinecraftMessageFormat = "§e<§r{PLAYER}§e> §r{MESSAGE}"; // messages sent to minecraft
     static boolean loadConfig()
@@ -53,16 +54,10 @@ public class ConfigManager
             if(!notSet(cfg.getString("socksProxy"))) // is socksProxy field set?
             {
                 String[] socksProxy = cfg.getString("socksProxy").split(":");
-                if("default".equalsIgnoreCase(cfg.getString("socksProxy")))
-                { // use proxy settings in JVM arguments
-                    socksProxyHost = System.getProperty("socksProxyHost");
-                    socksProxyPort = System.getProperty("socksProxyPort");
-                }
-                else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$"))
-                { // socksProxy is set and valid
-                    socksProxyHost = socksProxy[0];
-                    socksProxyPort = socksProxy[1];
-                }
+                if("default".equalsIgnoreCase(cfg.getString("socksProxy"))) // use proxy settings in JVM arguments
+                    proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(System.getProperty("socksProxyHost"), Integer.parseInt(System.getProperty("socksProxyPort"))));
+                else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$")) // socksProxy is set and valid
+                    proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxy[0], Integer.parseInt(socksProxy[1])));
             }
             // set message formatter
             if("disabled".equalsIgnoreCase(cfg.getString("toGuildedMessageFormat")))
