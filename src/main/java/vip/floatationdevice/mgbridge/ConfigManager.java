@@ -21,8 +21,8 @@ public class ConfigManager
     static boolean forwardJoinLeaveEvents = true;
     static boolean debug = false;
     static Proxy proxy = Proxy.NO_PROXY;
-    static String toGuildedMessageFormat = "<{PLAYER}> {MESSAGE}"; // messages sent to guilded
-    static String toMinecraftMessageFormat = "§e<§r{PLAYER}§e> §r{MESSAGE}"; // messages sent to minecraft
+    static String toGuildedMessageFormat = "**{PLAYER} ⟫** {MESSAGE}";
+    static String toMinecraftMessageFormat = "[§eGuilded§r] <{PLAYER}> {MESSAGE}";
     static boolean loadConfig()
     {
         File cfgFile = new File(instance.getDataFolder(), "config.yml");
