@@ -8,12 +8,19 @@ import vip.floatationdevice.mgbridge.GuildedCommandExecutor;
 import java.util.ArrayList;
 
 import static vip.floatationdevice.mgbridge.BindManager.bindMap;
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
 
 public class Command_list implements GuildedCommandExecutor
 {
     @Override
     public String getCommandName(){return "list";}
+
+    @Override
+    public String getDescription(){return translate("g-cmd-list-desc");}
+
+    @Override
+    public String getUsage(){return "/mgb list";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

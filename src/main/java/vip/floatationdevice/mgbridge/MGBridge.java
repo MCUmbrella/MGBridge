@@ -13,10 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import vip.floatationdevice.guilded4j.G4JClient;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 import vip.floatationdevice.guilded4j.object.Embed;
-import vip.floatationdevice.mgbridge.gce.Command_list;
-import vip.floatationdevice.mgbridge.gce.Command_mkbind;
-import vip.floatationdevice.mgbridge.gce.Command_ping;
-import vip.floatationdevice.mgbridge.gce.Command_rmbind;
+import vip.floatationdevice.mgbridge.gce.*;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -47,6 +44,8 @@ public final class MGBridge extends JavaPlugin implements Listener
             g4JClient = new G4JClient(token);
             getCommand("mgb").setExecutor(new BukkitCommandExecutor());
             gEventListener = new GuildedEventListener()
+                    .registerExecutor(new Command_help())
+                    .registerExecutor(new Command_helpof())
                     .registerExecutor(new Command_mkbind())
                     .registerExecutor(new Command_rmbind())
                     .registerExecutor(new Command_ping())

@@ -4,12 +4,19 @@ import vip.floatationdevice.guilded4j.object.ChatMessage;
 import vip.floatationdevice.mgbridge.GuildedCommandExecutor;
 
 import static vip.floatationdevice.mgbridge.BindManager.bindMap;
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
 
 public class Command_ping implements GuildedCommandExecutor
 {
     @Override
     public String getCommandName(){return "ping";}
+
+    @Override
+    public String getDescription(){return translate("g-cmd-ping-desc");}
+
+    @Override
+    public String getUsage(){return "/mgb ping";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

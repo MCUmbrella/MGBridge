@@ -9,6 +9,9 @@ import vip.floatationdevice.guilded4j.event.GuildedWebSocketWelcomeEvent;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
@@ -19,25 +22,23 @@ import static vip.floatationdevice.mgbridge.ConfigManager.*;
 public class GuildedEventListener
 {
     G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
-    private final ArrayList<GuildedCommandExecutor> executors = new ArrayList<>(); // list of guilded commands to execute
+    private final HashMap<String, GuildedCommandExecutor> executors = new HashMap<>(); // subcommands of the guilded command "/mgb"
+
+    public HashMap<String, GuildedCommandExecutor> getExecutors()
+    {
+        return executors;
+    }
 
     public GuildedEventListener registerExecutor(GuildedCommandExecutor executor)
     {
-        executors.add(executor);
+        executors.put(executor.getCommandName(), executor);
         return this;
     }
 
     public GuildedEventListener unregisterExecutor(String commandName)
     {
-        for(GuildedCommandExecutor executor : executors)
-        {
-            if(executor.getCommandName().equals(commandName))
-            {
-                executors.remove(executor);
-                return this;
-            }
-        }
-        throw new IllegalArgumentException("No executor found for command " + commandName);
+        if(executors.remove(commandName) == null) throw new IllegalArgumentException("No executor found for command " + commandName);
+        return this;
     }
 
     public void unregisterAllExecutors()
@@ -94,9 +95,8 @@ public class GuildedEventListener
                 if(args.length == 1) return; // no subcommand. do nothing
                 String[] subCommandArgs = new String[args.length - 2]; // arg1 arg2 ...
                 System.arraycopy(args, 2, subCommandArgs, 0, subCommandArgs.length);
-                for(GuildedCommandExecutor executor : executors)
-                    if(executor.getCommandName().equals(args[1]))
-                        executor.execute(msg, subCommandArgs);
+                if(executors.get(args[1]) != null)
+                    executors.get(args[1]).execute(msg, subCommandArgs);
             }
             else // not a mgb command. consider it as normal message
             { // check if G->M forwarding is enabled, the message is not a command, and the message is from a user who is bound to Minecraft

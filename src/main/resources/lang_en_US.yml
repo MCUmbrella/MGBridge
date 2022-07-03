@@ -40,3 +40,13 @@ mgb-stopped: "MGBridge stopped"
 player-connected: ":arrow_forward: %PLAYER% connected"
 player-disconnected: ":arrow_backward: %PLAYER% disconnected"
 player-disconnected-unusual: "`(%PLAYER% lost connection: %REASON%)`"
+
+# Descriptions of Guilded commands
+g-cmd-mkbind-desc: "Verify the bind code and bind your Guilded account"
+g-cmd-rmbind-desc: "Unbind your Guilded account"
+g-cmd-list-desc: "List online players"
+g-cmd-ping-desc: "Test the connection to Guilded server"
+g-cmd-help-desc: "Show all available MGB subcommands"
+g-cmd-help-msg: "**Available subcommands:** %SUBCOMMANDS%\nTo see more information about a subcommand, type \"`/mgb helpof <subcommand>`\""
+g-cmd-helpof-desc: "Show the detailed help of a MGB subcommand"
+g-cmd-helpof-msg: "**===== Subcommand %SUBCOMMAND% =====**\nDescription: %DESCRIPTION%\nUsage: `%USAGE%`"

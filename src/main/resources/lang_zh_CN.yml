@@ -40,3 +40,13 @@ mgb-stopped: "MGBridge已停止"
 player-connected: ":arrow_forward: %PLAYER%加入了游戏"
 player-disconnected: ":arrow_backward: %PLAYER%离开了游戏"
 player-disconnected-unusual: "`(%PLAYER%连接中断：%REASON%)`"
+
+# Descriptions of Guilded commands
+g-cmd-mkbind-desc: "验证绑定码，绑定Guilded账户到Minecraft"
+g-cmd-rmbind-desc: "解除到Minecraft的绑定"
+g-cmd-list-desc: "显示服务器里的在线玩家"
+g-cmd-ping-desc: "检测Guilded服务器的连接状态"
+g-cmd-help-desc: "显示所有可用的MGB子命令"
+g-cmd-help-msg: "**MGB子命令列表:** %SUBCOMMANDS%\n输入“`/mgb helpof <子命令名>`”可查看单个子命令的详细信息"
+g-cmd-helpof-desc: "显示指定子命令的说明"
+g-cmd-helpof-msg: "**===== 子命令%SUBCOMMAND% =====**\n描述: %DESCRIPTION%\n用法: `%USAGE%`"

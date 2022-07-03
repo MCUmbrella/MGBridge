@@ -6,7 +6,7 @@
 
     <groupId>vip.floatationdevice</groupId>
     <artifactId>mgbridge</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <packaging>jar</packaging>
 
     <name>MGBridge</name>
