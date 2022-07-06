@@ -8,7 +8,8 @@ import vip.floatationdevice.mgbridge.event.UserBoundEvent;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
-import static vip.floatationdevice.mgbridge.MGBridge.*;
+import static vip.floatationdevice.mgbridge.MGBridge.getPlayerName;
+import static vip.floatationdevice.mgbridge.MGBridge.instance;
 
 public class Command_mkbind implements GuildedCommandExecutor
 {
@@ -16,10 +17,10 @@ public class Command_mkbind implements GuildedCommandExecutor
     public String getCommandName(){return "mkbind";}
 
     @Override
-    public String getDescription(){return translate("g-cmd-mkbind-desc");}
+    public String getCommandDescription(){return translate("g-cmd-mkbind-desc");}
 
     @Override
-    public String getUsage(){return "/mgb mkbind <CODE>";}
+    public String getCommandUsage(){return "/mgb mkbind <CODE>";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)
@@ -49,7 +50,7 @@ public class Command_mkbind implements GuildedCommandExecutor
                     }
                     catch(NullPointerException ignored) {} // player is offline. ignore
                     instance.sendGuildedEmbed(new Embed().setTitle(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId())))).setColor(0x00ff00), msg.getId(), null, null);
-                    log.info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
+                    instance.getLogger().info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
                     saveBindMap();
                     Bukkit.getServer().getPluginManager().callEvent(new UserBoundEvent(msg.getCreatorId(), bindMap.get(msg.getCreatorId())));
                     return true;

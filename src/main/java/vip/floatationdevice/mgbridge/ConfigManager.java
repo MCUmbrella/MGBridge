@@ -23,10 +23,15 @@ public class ConfigManager
     static Proxy proxy = Proxy.NO_PROXY;
     static String toGuildedMessageFormat = "**{PLAYER} ⟫** {MESSAGE}";
     static String toMinecraftMessageFormat = "[§eGuilded§r] <{PLAYER}> {MESSAGE}";
+
+    /**
+     * Load the config file of MGBridge.
+     * @return True if the config file is loaded and valid, false otherwise.
+     */
     static boolean loadConfig()
     {
         File cfgFile = new File(instance.getDataFolder(), "config.yml");
-        if (!cfgFile.exists())
+        if(!cfgFile.exists())
         { // create default config file if it doesn't exist
             log.severe("Config file not found and an empty one will be created. Set the token and channel UUID and RESTART server.");
             instance.saveDefaultConfig();

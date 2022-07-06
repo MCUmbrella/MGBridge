@@ -4,9 +4,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
 import static vip.floatationdevice.mgbridge.MGBridge.log;
-import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 public class BindManager
 {

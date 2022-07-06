@@ -15,12 +15,12 @@ public interface GuildedCommandExecutor
      * Gets the description of the subcommand.
      * @return The description of the subcommand.
      */
-    String getDescription();
+    String getCommandDescription();
 
     /**
      * Gets the usage of the subcommand.
      * @return The usage of the subcommand.
      */
-    String getUsage();
+    String getCommandUsage();
     boolean execute(ChatMessage msg, String[] args);
 }

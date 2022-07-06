@@ -15,13 +15,13 @@ public class Command_helpof implements GuildedCommandExecutor
     }
 
     @Override
-    public String getDescription()
+    public String getCommandDescription()
     {
         return translate("g-cmd-helpof-desc");
     }
 
     @Override
-    public String getUsage()
+    public String getCommandUsage()
     {
         return "/mgb helpof <SUBCOMMAND>";
     }
@@ -34,9 +34,9 @@ public class Command_helpof implements GuildedCommandExecutor
             GuildedCommandExecutor gce = instance.getGEventListener().getExecutors().get(args[0]);
             String desc = null, usage = null;
             try
-            {// GuildedCommandExecutor from MGB version 0.9.2 and older doesn't implement getDescription() and getUsage()
-                desc = gce.getDescription();
-                usage = gce.getUsage();
+            {// GuildedCommandExecutor from MGB version 0.9.3 and older doesn't implement getCommandDescription() and getCommandUsage()
+                desc = gce.getCommandDescription();
+                usage = gce.getCommandUsage();
             }
             catch(AbstractMethodError e)
             {

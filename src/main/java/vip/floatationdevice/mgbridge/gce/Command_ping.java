@@ -13,10 +13,10 @@ public class Command_ping implements GuildedCommandExecutor
     public String getCommandName(){return "ping";}
 
     @Override
-    public String getDescription(){return translate("g-cmd-ping-desc");}
+    public String getCommandDescription(){return translate("g-cmd-ping-desc");}
 
     @Override
-    public String getUsage(){return "/mgb ping";}
+    public String getCommandUsage(){return "/mgb ping";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

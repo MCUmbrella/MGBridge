@@ -12,11 +12,13 @@ import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.ConfigManager.proxy;
 import static vip.floatationdevice.mgbridge.ConfigManager.token;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
-import static vip.floatationdevice.mgbridge.MGBridge.*;
+import static vip.floatationdevice.mgbridge.MGBridge.instance;
+import static vip.floatationdevice.mgbridge.MGBridge.log;
 
 public class BukkitCommandExecutor implements CommandExecutor
 {
-    public static final Random r = new Random(); // used to generate random bind code
+    static final Random r = new Random(); // used to generate random bind code
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
@@ -24,15 +26,29 @@ public class BukkitCommandExecutor implements CommandExecutor
         {
             try
             {
-                instance.gEventListener.disconnect();
+                try {instance.gEventListener.disconnect();} catch(IllegalArgumentException ignored) {}
+                if(ConfigManager.loadConfig())
+                {
+                    instance.g4JClient = new G4JClient(token);
+                    instance.g4JClient.setProxy(proxy);
+                    instance.gEventListener.connect();
+                    log.info("MGBridge reloaded");
+                    if(sender instanceof Player) sender.sendMessage("[§eMGBridge§f] §aMGBridge reloaded");
+                }
+                else
+                {
+                    log.severe("MGBridge reloaded with errors");
+                    if(sender instanceof Player) sender.sendMessage("[§eMGBridge§f] §cMGBridge reloaded with errors");
+                }
+                return true;
             }
-            catch(IllegalArgumentException ignored){}
-            ConfigManager.loadConfig();
-            instance.g4JClient = new G4JClient(token);
-            instance.g4JClient.getChatMessageManager().setProxy(proxy);
-            instance.gEventListener.connect();
-            sender.sendMessage("MGBridge reloaded");
-            return true;
+            catch(Throwable e)
+            {
+                log.severe("Failed to reload MGBridge");
+                e.printStackTrace();
+                if(sender instanceof Player) sender.sendMessage("[§eMGBridge§f] §cFailed to reload MGBridge");
+                return false;
+            }
         }
 
         if(!(sender instanceof Player))

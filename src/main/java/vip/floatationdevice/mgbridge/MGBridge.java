@@ -19,13 +19,15 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import static vip.floatationdevice.mgbridge.ConfigManager.*;
-import static vip.floatationdevice.mgbridge.ConfigManager.toGuildedMessageFormat;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
 
 public final class MGBridge extends JavaPlugin implements Listener
 {
+    /**
+     * The instance of the plugin.
+     */
     public static MGBridge instance;
-    public static Logger log;
+    static Logger log;
     G4JClient g4JClient = null;
     GuildedEventListener gEventListener = null;
 
@@ -50,7 +52,7 @@ public final class MGBridge extends JavaPlugin implements Listener
                     .registerExecutor(new Command_rmbind())
                     .registerExecutor(new Command_ping())
                     .registerExecutor(new Command_list());
-            g4JClient.getChatMessageManager().setProxy(proxy);
+            g4JClient.setProxy(proxy);
             Bukkit.getPluginManager().registerEvents(this, this);
             sendGuildedEmbed(new Embed().setTitle(translate("mgb-started").replace("%VERSION%", getDescription().getVersion())).setColor(0xffffff), null, null, null);
         }
@@ -71,6 +73,7 @@ public final class MGBridge extends JavaPlugin implements Listener
             gEventListener.unregisterAllExecutors();
             gEventListener = null;
         }
+
         if(g4JClient != null)
         {
             ChatMessage result = null;
@@ -124,6 +127,13 @@ public final class MGBridge extends JavaPlugin implements Listener
             sendGuildedEmbed(new Embed().setTitle(translate("player-disconnected").replace("%PLAYER%", event.getPlayer().getName())).setColor(0xffff00), null, null, null);
     }
 
+    /**
+     * Sends a message to Guilded server.
+     * @param msg The content of the message.
+     * @param replyTo The ID of the message to reply to. Set to null to not reply.
+     * @param isPrivate Whether the reply is private or not.
+     * @param isSilent Whether the reply is silent or not.
+     */
     public void sendGuildedMessage(String msg, String replyTo, Boolean isPrivate, Boolean isSilent)
     {
         Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
@@ -157,6 +167,13 @@ public final class MGBridge extends JavaPlugin implements Listener
         });
     }
 
+    /**
+     * Sends an embed to Guilded server.
+     * @param emb The embed to send.
+     * @param replyTo The ID of the message to reply to. Set to null to not reply.
+     * @param isPrivate Whether the reply is private or not.
+     * @param isSilent Whether the reply is silent or not.
+     */
     public void sendGuildedEmbed(Embed emb, String replyTo, Boolean isPrivate, Boolean isSilent)
     {
         Bukkit.getScheduler().runTaskAsynchronously(instance, new Runnable()
@@ -198,14 +215,36 @@ public final class MGBridge extends JavaPlugin implements Listener
         return false;
     }
 
+    /**
+     * Gets the name of a player by UUID.
+     * @param u The UUID of the player.
+     * @return The name of the player. If the player is not found, returns "???".
+     */
     public static String getPlayerName(final UUID u)
     {
         try {return Bukkit.getPlayer(u).getName();}
-        catch(NullPointerException e) {return Bukkit.getOfflinePlayer(u).getName();}
+        catch(NullPointerException e)
+        {
+            String s = Bukkit.getOfflinePlayer(u).getName();
+            return s != null ? s : "???";
+        }
     }
 
+    /**
+     * Gets the Guilded event listener.
+     * @return The GuildedEventListener object.
+     */
     public GuildedEventListener getGEventListener()
     {
         return gEventListener;
+    }
+
+    /**
+     * Gets the G4JClient used by the plugin.
+     * @return The G4JClient object.
+     */
+    public G4JClient getG4JClient()
+    {
+        return g4JClient;
     }
 }

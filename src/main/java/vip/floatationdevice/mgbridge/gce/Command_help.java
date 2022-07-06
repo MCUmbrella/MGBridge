@@ -15,13 +15,13 @@ public class Command_help implements GuildedCommandExecutor
     }
 
     @Override
-    public String getDescription()
+    public String getCommandDescription()
     {
         return translate("g-cmd-help-desc");
     }
 
     @Override
-    public String getUsage()
+    public String getCommandUsage()
     {
         return "/mgb help";
     }

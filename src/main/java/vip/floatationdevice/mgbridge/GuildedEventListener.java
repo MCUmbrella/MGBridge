@@ -8,15 +8,13 @@ import vip.floatationdevice.guilded4j.event.GuildedWebSocketClosedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketWelcomeEvent;
 import vip.floatationdevice.guilded4j.object.ChatMessage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
-import static vip.floatationdevice.mgbridge.BindManager.*;
-import static vip.floatationdevice.mgbridge.I18nUtil.translate;
-import static vip.floatationdevice.mgbridge.MGBridge.*;
+import static vip.floatationdevice.mgbridge.BindManager.bindMap;
 import static vip.floatationdevice.mgbridge.ConfigManager.*;
+import static vip.floatationdevice.mgbridge.I18nUtil.translate;
+import static vip.floatationdevice.mgbridge.MGBridge.getPlayerName;
+import static vip.floatationdevice.mgbridge.MGBridge.log;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class GuildedEventListener
@@ -24,24 +22,38 @@ public class GuildedEventListener
     G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
     private final HashMap<String, GuildedCommandExecutor> executors = new HashMap<>(); // subcommands of the guilded command "/mgb"
 
+    /**
+     * Gets the map of subcommands of the Guilded command "/mgb".
+     * @return A HashMap object. The key is the name of the subcommand, the value is the GuildedCommandExecutor object of the subcommand.
+     */
     public HashMap<String, GuildedCommandExecutor> getExecutors()
     {
         return executors;
     }
 
+    /**
+     * Register a subcommand.
+     * @param executor The GuildedCommandExecutor object of the subcommand.
+     */
     public GuildedEventListener registerExecutor(GuildedCommandExecutor executor)
     {
         executors.put(executor.getCommandName(), executor);
         return this;
     }
 
+    /**
+     * Unregister a subcommand.
+     * @param commandName The name of the subcommand.
+     * @throws IllegalArgumentException If the subcommand does not exist.
+     */
     public GuildedEventListener unregisterExecutor(String commandName)
     {
-        if(executors.remove(commandName) == null) throw new IllegalArgumentException("No executor found for command " + commandName);
+        if(executors.remove(commandName) == null)
+            throw new IllegalArgumentException("No executor found for command " + commandName);
         return this;
     }
 
-    public void unregisterAllExecutors()
+    void unregisterAllExecutors()
     {
         executors.clear();
     }

@@ -17,10 +17,10 @@ public class Command_list implements GuildedCommandExecutor
     public String getCommandName(){return "list";}
 
     @Override
-    public String getDescription(){return translate("g-cmd-list-desc");}
+    public String getCommandDescription(){return translate("g-cmd-list-desc");}
 
     @Override
-    public String getUsage(){return "/mgb list";}
+    public String getCommandUsage(){return "/mgb list";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)

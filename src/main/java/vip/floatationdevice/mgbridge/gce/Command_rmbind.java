@@ -11,7 +11,7 @@ import java.util.UUID;
 import static vip.floatationdevice.mgbridge.BindManager.bindMap;
 import static vip.floatationdevice.mgbridge.BindManager.saveBindMap;
 import static vip.floatationdevice.mgbridge.I18nUtil.translate;
-import static vip.floatationdevice.mgbridge.MGBridge.*;
+import static vip.floatationdevice.mgbridge.MGBridge.getPlayerName;
 import static vip.floatationdevice.mgbridge.MGBridge.instance;
 
 public class Command_rmbind implements GuildedCommandExecutor
@@ -20,10 +20,10 @@ public class Command_rmbind implements GuildedCommandExecutor
     public String getCommandName(){return "rmbind";}
 
     @Override
-    public String getDescription(){return translate("g-cmd-rmbind-desc");}
+    public String getCommandDescription(){return translate("g-cmd-rmbind-desc");}
 
     @Override
-    public String getUsage(){return "/mgb rmbind";}
+    public String getCommandUsage(){return "/mgb rmbind";}
 
     @Override
     public boolean execute(ChatMessage msg, String[] args)
@@ -37,7 +37,7 @@ public class Command_rmbind implements GuildedCommandExecutor
             catch(Exception ignored) {} // player is offline. ignore
             UUID removed = bindMap.remove(msg.getCreatorId());
             instance.sendGuildedEmbed(new Embed().setTitle(translate("g-unbind-success")).setColor(0x00ff00), msg.getId(), null, null);
-            log.info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
+            instance.getLogger().info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
             saveBindMap();
             Bukkit.getServer().getPluginManager().callEvent(new UserUnboundEvent(msg.getCreatorId(), removed));
             return true;
