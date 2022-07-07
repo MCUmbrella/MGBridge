@@ -10,9 +10,9 @@ import static vip.floatationdevice.mgbridge.MGBridge.log;
 
 public class BindManager
 {
-    public static HashMap<String, UUID> bindMap = new HashMap<String, UUID>();// key: guilded userId; value: mc player uuid
-    public static HashMap<String, UUID> pendingMap = new HashMap<String, UUID>();// key: bind code; value: mc player uuid
-    public static HashMap<UUID, String> pendingPlayerMap = new HashMap<UUID, String>();// pendingMap but with upside down
+    public static final HashMap<String, UUID> bindMap = new HashMap<String, UUID>();// key: guilded userId; value: mc player uuid
+    public static final HashMap<String, UUID> pendingMap = new HashMap<String, UUID>();// key: bind code; value: mc player uuid
+    public static final HashMap<UUID, String> pendingPlayerMap = new HashMap<UUID, String>();// pendingMap but with upside down
 
     public BindManager()
     {
@@ -49,7 +49,8 @@ public class BindManager
             ObjectInputStream o = new ObjectInputStream(new FileInputStream(new File(instance.getDataFolder(), "bindMap.dat")));
             BindMapContainer temp = (BindMapContainer) o.readObject();
             o.close();
-            bindMap = temp.saveBindMap;
+            bindMap.clear();
+            bindMap.putAll(temp.saveBindMap);
             log.info(translate("bindmap-load-success").replace("%COUNT%", String.valueOf(bindMap.size())));
         }
         catch(FileNotFoundException ignored) {}

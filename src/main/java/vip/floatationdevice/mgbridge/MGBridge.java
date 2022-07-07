@@ -247,4 +247,31 @@ public final class MGBridge extends JavaPlugin implements Listener
     {
         return g4JClient;
     }
+
+    /**
+     * Gets the Guilded channel ID used by the plugin.
+     * @return The ID of the Guilded channel.
+     */
+    public String getChannelId()
+    {
+        return channel;
+    }
+
+    /**
+     * Gets the Guilded server ID used by the plugin.
+     * @return The ID of the Guilded server.
+     */
+    public String getServerId()
+    {
+        return server;
+    }
+
+    /**
+     * Check if the Guilded user is bound to a Minecraft player.
+     * @param userId The ID of the Guilded user.
+     */
+    public static boolean isBound(String userId)
+    {
+        return BindManager.bindMap.containsKey(userId);
+    }
 }
