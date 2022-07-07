@@ -252,7 +252,7 @@ public final class MGBridge extends JavaPlugin implements Listener
      * Gets the Guilded channel ID used by the plugin.
      * @return The ID of the Guilded channel.
      */
-    public String getChannelId()
+    public static String getChannelId()
     {
         return channel;
     }
@@ -261,7 +261,7 @@ public final class MGBridge extends JavaPlugin implements Listener
      * Gets the Guilded server ID used by the plugin.
      * @return The ID of the Guilded server.
      */
-    public String getServerId()
+    public static String getServerId()
     {
         return server;
     }
