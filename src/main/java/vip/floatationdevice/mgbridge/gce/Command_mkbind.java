@@ -52,7 +52,14 @@ public class Command_mkbind implements GuildedCommandExecutor
                     instance.sendGuildedEmbed(new Embed().setTitle(translate("g-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId())))).setColor(0x00ff00), msg.getId(), null, null);
                     instance.getLogger().info(translate("c-bind-success").replace("%PLAYER%", getPlayerName(bindMap.get(msg.getCreatorId()))));
                     saveBindMap();
-                    Bukkit.getServer().getPluginManager().callEvent(new UserBoundEvent(msg.getCreatorId(), bindMap.get(msg.getCreatorId())));
+                    Bukkit.getScheduler().runTask(instance, new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Bukkit.getServer().getPluginManager().callEvent(new UserBoundEvent(msg.getCreatorId(), bindMap.get(msg.getCreatorId())));
+                        }
+                    });
                     return true;
                 }
                 else// code not in pending list?

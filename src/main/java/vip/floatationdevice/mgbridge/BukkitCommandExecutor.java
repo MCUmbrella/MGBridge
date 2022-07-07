@@ -5,8 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import vip.floatationdevice.guilded4j.G4JClient;
+import vip.floatationdevice.mgbridge.event.UserUnboundEvent;
 
 import java.util.Random;
+import java.util.UUID;
 
 import static vip.floatationdevice.mgbridge.BindManager.*;
 import static vip.floatationdevice.mgbridge.ConfigManager.proxy;
@@ -73,14 +75,15 @@ public class BukkitCommandExecutor implements CommandExecutor
         else if(args.length == 1 && args[0].equals("rmbind"))
         {
             if(!sender.hasPermission("mgbridge.rmbind")) return false;
-            for(String u : bindMap.keySet())
+            for(String userId : bindMap.keySet())
             {
-                if(bindMap.get(u).equals(((Player) sender).getUniqueId()))
+                if(bindMap.get(userId).equals(((Player) sender).getUniqueId()))
                 {
-                    bindMap.remove(u);
+                    UUID removed = bindMap.remove(userId);
                     sender.sendMessage(translate("m-unbind-success"));
                     log.info(translate("c-unbind-success").replace("%PLAYER%", sender.getName()));
                     saveBindMap();
+                    instance.getServer().getPluginManager().callEvent(new UserUnboundEvent(userId, removed));
                     return true;
                 }
             }

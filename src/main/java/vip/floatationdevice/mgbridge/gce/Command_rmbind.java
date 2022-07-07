@@ -39,7 +39,14 @@ public class Command_rmbind implements GuildedCommandExecutor
             instance.sendGuildedEmbed(new Embed().setTitle(translate("g-unbind-success")).setColor(0x00ff00), msg.getId(), null, null);
             instance.getLogger().info(translate("c-unbind-success").replace("%PLAYER%", getPlayerName(removed)));
             saveBindMap();
-            Bukkit.getServer().getPluginManager().callEvent(new UserUnboundEvent(msg.getCreatorId(), removed));
+            Bukkit.getScheduler().runTask(instance, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    Bukkit.getServer().getPluginManager().callEvent(new UserUnboundEvent(msg.getCreatorId(), removed));
+                }
+            });
             return true;
         }
         else// player not bound?
