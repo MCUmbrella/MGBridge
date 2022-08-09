@@ -9,7 +9,7 @@ msg-send-failed: "转发信息到Guilded失败：%EXCEPTION%"
 connecting: "连接Guilded服务器"
 connected: "成功连接到Guilded服务器"
 disconnected: "到Guilded服务器的连接已关闭"
-disconnected-unexpected: "到Guilded服务器的连接中断，重连中"
+disconnected-unexpected: "到Guilded服务器的连接中断，%DELAY%秒后尝试重新连接"
 
 bindmap-save-success: "保存绑定表"
 bindmap-save-failure: "保存绑定表失败：%EXCEPTION%"

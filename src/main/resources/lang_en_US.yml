@@ -9,7 +9,7 @@ msg-send-failed: "Failed to send message to Guilded server: %EXCEPTION%"
 connecting: "Connecting to Guilded server"
 connected: "Successfully connected to Guilded server"
 disconnected: "Connection to Guilded server closed"
-disconnected-unexpected: "Connection to Guilded server lost. Reconnecting"
+disconnected-unexpected: "Connection to Guilded server lost. Reconnecting in %DELAY% second(s)"
 
 bindmap-save-success: "Bind map saved"
 bindmap-save-failure: "Failed to save bind map: %EXCEPTION%"

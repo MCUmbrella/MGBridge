@@ -24,7 +24,7 @@ public class ConfigManager
     static Proxy proxy = Proxy.NO_PROXY;
     static String toGuildedMessageFormat = "**{PLAYER} ⟫** {MESSAGE}";
     static String toMinecraftMessageFormat = "[§eGuilded§r] <{PLAYER}> {MESSAGE}";
-    static int reconnectDelay = 10;
+    static long reconnectDelay = 3;
 
     /**
      * Load the config file of MGBridge.
@@ -56,7 +56,7 @@ public class ConfigManager
             server = cfg.getString("server");
             channel = cfg.getString("channel");
             forwardJoinLeaveEvents = cfg.getBoolean("forwardJoinLeaveEvents", true);
-            reconnectDelay = cfg.getInt("reconnectDelay", 10);
+            reconnectDelay = Math.max(cfg.getLong("reconnectDelay", 3L), 1L);
             debug = cfg.getBoolean("debug", false);
             I18nUtil.setLanguage(lang);
             log.info("Language: " + translate("language") + " (" + lang + ") by " + translate("language-file-contributor"));

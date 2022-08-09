@@ -87,11 +87,8 @@ public class GuildedEventListener
     {
         // if the plugin is running normally but the connection was closed
         // then we can consider it as unexpected and try to reconnect
-        log.warning(translate("disconnected-unexpected"));
-        MGBridge.instance.getG4JClient().ws = new G4JWebSocketClient(token);
-        MGBridge.instance.getG4JClient().ws.setProxy(proxy);
-        MGBridge.instance.getG4JClient().ws.eventBus.register(this);
-        MGBridge.instance.getG4JClient().ws.connect();
+        log.warning(translate("disconnected-unexpected").replace("%DELAY%", String.valueOf(reconnectDelay)));
+        Bukkit.getScheduler().runTaskLater(MGBridge.instance, this::connect, reconnectDelay * 20L);
     }
 
     @Subscribe

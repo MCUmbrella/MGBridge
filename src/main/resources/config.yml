@@ -25,6 +25,6 @@ toGuildedMessageFormat: "**{PLAYER} ⟫** {MESSAGE}"
 # You can disable forwarding messages from Guilded to Minecraft by setting this to "disabled"
 toMinecraftMessageFormat: "[§eGuilded§r] <{PLAYER}> {MESSAGE}"
 # If the WebSocket connection is lost, the plugin will attempt to reconnect every this amount of seconds
-reconnectDelay: 10
+reconnectDelay: 3
 # Print the response after forwarding a message to Guilded
 debug: false
