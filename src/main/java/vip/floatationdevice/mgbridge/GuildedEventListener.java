@@ -19,7 +19,6 @@ import static vip.floatationdevice.mgbridge.MGBridge.log;
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class GuildedEventListener
 {
-    G4JWebSocketClient ws; // used to connect to guilded and receive guilded messages
     private final HashMap<String, GuildedCommandExecutor> executors = new HashMap<>(); // subcommands of the guilded command "/mgb"
 
     /**
@@ -66,17 +65,17 @@ public class GuildedEventListener
     void connect()
     {
         log.info(translate("connecting"));
-        ws = new G4JWebSocketClient(token);
-        ws.setProxy(proxy);
-        ws.eventBus.register(this);
-        ws.connect();
+        MGBridge.instance.getG4JClient().ws = new G4JWebSocketClient(token);
+        MGBridge.instance.getG4JClient().ws.setProxy(proxy);
+        MGBridge.instance.getG4JClient().ws.eventBus.register(this);
+        MGBridge.instance.getG4JClient().ws.connect();
     }
 
     void disconnect()
     {
         // unregister gEventListener from event bus first to prevent automatic reconnection
-        ws.eventBus.unregister(this);
-        ws.close();
+        MGBridge.instance.getG4JClient().ws.eventBus.unregister(this);
+        MGBridge.instance.getG4JClient().ws.close();
         log.info(translate("disconnected"));
     }
 
@@ -87,12 +86,12 @@ public class GuildedEventListener
     public void onG4JConnectionClosed(GuildedWebSocketClosedEvent event)
     {
         // if the plugin is running normally but the connection was closed
-        // then we can consider it as unexpected and do a reconnection
+        // then we can consider it as unexpected and try to reconnect
         log.warning(translate("disconnected-unexpected"));
-        ws = new G4JWebSocketClient(token);
-        ws.setProxy(proxy);
-        ws.eventBus.register(this);
-        ws.connect();
+        MGBridge.instance.getG4JClient().ws = new G4JWebSocketClient(token);
+        MGBridge.instance.getG4JClient().ws.setProxy(proxy);
+        MGBridge.instance.getG4JClient().ws.eventBus.register(this);
+        MGBridge.instance.getG4JClient().ws.connect();
     }
 
     @Subscribe

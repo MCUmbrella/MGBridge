@@ -46,7 +46,9 @@ public class ConfigManager
             int configYmlVersion = cfg.getInt("version", Integer.MIN_VALUE);
             if(CONFIG_VERSION != configYmlVersion)
             {
-                log.severe("The 'version' key in config.yml should be " + CONFIG_VERSION + " but found " + configYmlVersion + ", which usually means that you need to update config.yml. Please check out the changelog and consider updating it");
+                log.severe("The 'version' key in config.yml should be " + CONFIG_VERSION + " but found " + configYmlVersion + ",");
+                log.severe("which usually means that you need to update config.yml.");
+                log.severe("Please check out the changelog and consider updating it.");
                 log.severe("Starting MGBridge, but things may not work as expected");
             }
             lang = cfg.getString("language");

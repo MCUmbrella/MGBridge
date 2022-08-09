@@ -76,11 +76,10 @@ public final class MGBridge extends JavaPlugin implements Listener
 
         if(g4JClient != null)
         {
-            ChatMessage result = null;
             // this time the message sending must be done in main thread or bukkit will complain about the plugin is registering a task while being disabled
             try
             {
-                result = g4JClient.getChatMessageManager()
+                ChatMessage result = g4JClient.getChatMessageManager()
                         .createChannelMessage(
                                 channel,
                                 null,
@@ -89,11 +88,11 @@ public final class MGBridge extends JavaPlugin implements Listener
                                 null,
                                 null
                         );
+                if(debug && result != null)
+                    log.info("\n" + new JSONObject(result.toString()).toStringPretty());
             }
             catch(Exception e) {log.severe(translate("msg-send-failed").replace("%EXCEPTION%", e.toString()));}
             g4JClient = null;
-            if(debug && result != null)
-                log.info("\n" + new JSONObject(result.toString()).toStringPretty());
         }
     }
 
