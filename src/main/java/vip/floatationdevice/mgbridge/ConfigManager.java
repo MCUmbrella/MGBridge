@@ -11,6 +11,7 @@ import static vip.floatationdevice.mgbridge.MGBridge.*;
 
 public class ConfigManager
 {
+    final static int CONFIG_VERSION = 1;
     static YamlConfiguration cfg;
 
     static String lang;
@@ -23,6 +24,7 @@ public class ConfigManager
     static Proxy proxy = Proxy.NO_PROXY;
     static String toGuildedMessageFormat = "**{PLAYER} ⟫** {MESSAGE}";
     static String toMinecraftMessageFormat = "[§eGuilded§r] <{PLAYER}> {MESSAGE}";
+    static int reconnectDelay = 10;
 
     /**
      * Load the config file of MGBridge.
@@ -41,11 +43,18 @@ public class ConfigManager
         {
             // init configuration system
             cfg = YamlConfiguration.loadConfiguration(cfgFile);
+            int configYmlVersion = cfg.getInt("version", Integer.MIN_VALUE);
+            if(CONFIG_VERSION != configYmlVersion)
+            {
+                log.severe("The 'version' key in config.yml should be " + CONFIG_VERSION + " but found " + configYmlVersion + ", which usually means that you need to update config.yml. Please check out the changelog and consider updating it");
+                log.severe("Starting MGBridge, but things may not work as expected");
+            }
             lang = cfg.getString("language");
             token = cfg.getString("token");
             server = cfg.getString("server");
             channel = cfg.getString("channel");
             forwardJoinLeaveEvents = cfg.getBoolean("forwardJoinLeaveEvents", true);
+            reconnectDelay = cfg.getInt("reconnectDelay", 10);
             debug = cfg.getBoolean("debug", false);
             I18nUtil.setLanguage(lang);
             log.info("Language: " + translate("language") + " (" + lang + ") by " + translate("language-file-contributor"));

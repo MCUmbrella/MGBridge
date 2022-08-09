@@ -2,6 +2,9 @@
 # Go to https://github.com/MCUmbrella/MGBridge/tree/main/src/main/resources to see the available languages.
 # Language files are named "lang_xx_XX.yml" where "xx" is the language code and "XX" is the country code.
 language: "en_US"
+# The version of the config.yml file. This is used to check if the config.yml file is up-to-date.
+# Useful if you want to manually update config.yml without deleting the old one.
+version: 1
 # Your bot token. You can get one from "Server Settings -> Bots -> (bot name) -> Manage auth tokens"
 token:
 # Target server ID. The plugin will only detect messages sent from this server
@@ -10,13 +13,18 @@ server:
 channel:
 # Forward player join/quit messages
 forwardJoinLeaveEvents: true
-# Socks proxy address. Enter an address (e.g. "127.0.0.1:1080") to use a proxy, enter "default" to use the default proxy, or leave blank to not use a proxy.
+# Socks proxy address. Enter an address (e.g. "127.0.0.1:1080") to use a proxy,
+#  enter "default" to use the default proxy, or leave blank to not use a proxy.
 socksProxy:
-# The format of the chat messages from Minecraft to Guilded. You can use the following variables: {PLAYER}, {MESSAGE}
+# The format of the chat messages sent from Minecraft to Guilded.
+# You can use the following variables: {PLAYER}, {MESSAGE}
 # You can disable forwarding messages from Minecraft to Guilded by setting this to "disabled"
 toGuildedMessageFormat: "**{PLAYER} ⟫** {MESSAGE}"
-# The format of the chat messages sent from Guilded server to Minecraft. You can use the following variables: {PLAYER}, {MESSAGE}
+# The format of the chat messages sent from Guilded to Minecraft.
+# You can use the following variables: {PLAYER}, {MESSAGE}
 # You can disable forwarding messages from Guilded to Minecraft by setting this to "disabled"
 toMinecraftMessageFormat: "[§eGuilded§r] <{PLAYER}> {MESSAGE}"
+# If the WebSocket connection is lost, the plugin will attempt to reconnect every this amount of seconds
+reconnectDelay: 10
 # Print the response after forwarding a message to Guilded
 debug: false
