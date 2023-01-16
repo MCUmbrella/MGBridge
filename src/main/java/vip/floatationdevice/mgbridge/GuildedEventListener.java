@@ -2,7 +2,6 @@ package vip.floatationdevice.mgbridge;
 
 import com.google.common.eventbus.Subscribe;
 import org.bukkit.Bukkit;
-import vip.floatationdevice.guilded4j.G4JWebSocketClient;
 import vip.floatationdevice.guilded4j.event.ChatMessageCreatedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketClosedEvent;
 import vip.floatationdevice.guilded4j.event.GuildedWebSocketWelcomeEvent;
@@ -65,17 +64,12 @@ public class GuildedEventListener
     void connect()
     {
         log.info(translate("connecting"));
-        MGBridge.instance.getG4JClient().ws = new G4JWebSocketClient(token);
-        MGBridge.instance.getG4JClient().ws.setProxy(proxy);
-        MGBridge.instance.getG4JClient().ws.eventBus.register(this);
-        MGBridge.instance.getG4JClient().ws.connect();
+        MGBridge.instance.getG4JClient().registerEventListener(this).connectWebSocket();
     }
 
     void disconnect()
     {
-        // unregister gEventListener from event bus first to prevent automatic reconnection
-        MGBridge.instance.getG4JClient().ws.eventBus.unregister(this);
-        MGBridge.instance.getG4JClient().ws.close();
+        MGBridge.instance.getG4JClient().unregisterEventListener(this).disconnectWebSocket();
         log.info(translate("disconnected"));
     }
 

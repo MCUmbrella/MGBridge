@@ -6,7 +6,7 @@
 
     <groupId>vip.floatationdevice</groupId>
     <artifactId>mgbridge</artifactId>
-    <version>0.9.6</version>
+    <version>0.9.7</version>
     <packaging>jar</packaging>
 
     <name>MGBridge</name>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>vip.floatationdevice</groupId>
             <artifactId>guilded4j</artifactId>
-            <version>0.9.6</version>
+            <version>0.9.15</version>
         </dependency>
     </dependencies>
 </project>

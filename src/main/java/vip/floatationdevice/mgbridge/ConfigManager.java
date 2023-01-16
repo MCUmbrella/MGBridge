@@ -66,22 +66,39 @@ public class ConfigManager
                 return false;
             }
             BindManager.loadBindMap();
-            // set socks proxy
-            if(!notSet(cfg.getString("socksProxy"))) // is socksProxy field set?
+            // set proxy
+            if("direct".equalsIgnoreCase(cfg.getString("proxy.type", "direct")))
+                ; // do nothing
+            else if("default".equalsIgnoreCase(cfg.getString("proxy.type")))
             {
-                String[] socksProxy = cfg.getString("socksProxy").split(":");
-                if("default".equalsIgnoreCase(cfg.getString("socksProxy"))) // use proxy settings in JVM arguments
-                    try
-                    {
-                        proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(System.getProperty("socksProxyHost"), Integer.parseInt(System.getProperty("socksProxyPort"))));
-                    }
-                    catch(Exception ignored) {}
-                else if(socksProxy.length == 2 && socksProxy[0].length() > 0 && socksProxy[1].length() > 0 && socksProxy[1].matches("^\\d+$")) // socksProxy is set and valid
-                    try
-                    {
-                        proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(socksProxy[0], Integer.parseInt(socksProxy[1])));
-                    }
-                    catch(Exception ignored) {}
+                boolean hasSocksProxy = System.getProperty("socksProxyHost") != null && System.getProperty("socksProxyPort") != null,
+                        hasHttpProxy = System.getProperty("httpProxyHost") != null && System.getProperty("httpProxyPort") != null;
+                if(hasSocksProxy)
+                    proxy = new Proxy(
+                            Proxy.Type.SOCKS,
+                            new InetSocketAddress(
+                                    System.getProperty("socksProxyHost"),
+                                    Integer.parseInt(System.getProperty("socksProxyPort"))
+                            )
+                    );
+                else if(hasHttpProxy)
+                    proxy = new Proxy(
+                            Proxy.Type.HTTP,
+                            new InetSocketAddress(
+                                    System.getProperty("httpProxyHost"),
+                                    Integer.parseInt(System.getProperty("httpProxyPort"))
+                            )
+                    );
+            }
+            else
+            {
+                proxy = new Proxy(
+                        Proxy.Type.valueOf(cfg.getString("proxy.type").toUpperCase()),
+                        new InetSocketAddress(
+                                cfg.getString("proxy.address").split(":")[0],
+                                Integer.parseInt(cfg.getString("proxy.address").split(":")[1])
+                        )
+                );
             }
             // set message formatter
             if("disabled".equalsIgnoreCase(cfg.getString("toGuildedMessageFormat")))
