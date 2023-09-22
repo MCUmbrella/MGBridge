@@ -20,6 +20,8 @@ import static vip.floatationdevice.mgbridge.MGBridge.log;
 public class BukkitCommandExecutor implements CommandExecutor
 {
     static final Random r = new Random(); // used to generate random bind code
+    static final int BIND_CODE_LENGTH = 8;
+    static final char[] BIND_CODE_CHARS = "1234567890qwertyuiopasdfghjklzxcvbnm".toCharArray();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -62,10 +64,15 @@ public class BukkitCommandExecutor implements CommandExecutor
         if(args.length == 1 && args[0].equals("mkbind"))
         {
             if(!sender.hasPermission("mgbridge.mkbind")) return false;
-            String code = "";// 10-digit random bind code from ASCII x21(!) to x7E(~)
-            for(int i = 0; i != 10; i++) code += String.valueOf((char) (r.nextInt(94) + 33));// StringBuilder not needed
-            if(pendingPlayerMap.containsKey(((Player) sender).getUniqueId())) // remove old bind code if exists
+            // generate a random bind code
+            StringBuilder sb = new StringBuilder(BIND_CODE_LENGTH);
+            for(int i = 0; i != BIND_CODE_LENGTH; i++)
+                sb.append(BIND_CODE_CHARS[r.nextInt(BIND_CODE_CHARS.length)]);
+            String code = sb.toString();
+            // remove old bind code if exists
+            if(pendingPlayerMap.containsKey(((Player) sender).getUniqueId()))
                 pendingMap.remove(pendingPlayerMap.get(((Player) sender).getUniqueId()));
+            // add the player and code to the pending map
             pendingMap.put(code, ((Player) sender).getUniqueId());
             pendingPlayerMap.put(((Player) sender).getUniqueId(), code);
             sender.sendMessage(translate("m-code-requested").replace("%CODE%", code));

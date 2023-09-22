@@ -39,7 +39,7 @@ public class Command_mkbind implements GuildedCommandExecutor
             }
             else// player not bound?
             {
-                if(pendingMap.containsKey(args[0]))// code matched?
+                if(pendingMap.containsKey(args[0].toLowerCase()))// code matched?
                 {// bind!
                     bindMap.put(msg.getCreatorId(), pendingMap.get(args[0]));
                     pendingPlayerMap.remove(pendingMap.get(args[0]));
